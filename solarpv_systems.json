@@ -1,0 +1,22 @@
+[
+{
+	"solar_pv_id": 0,
+	"objectType": "solarPV",
+	"country": "UK", 
+	"solar_pv_name": "No Solar PV", 
+	"solar_pv_conversion_efficiency": 1.0,
+	"solar_pv_system_size_Wp": 0,
+	"solar_pv_cost": 0,
+	"solar_pv_currency": "GBP"
+},
+{
+	"solar_pv_id": 1,
+	"objectType": "solarPV",
+	"country": "UK", 
+	"solar_pv_name": "4kWp Rooftop SolarPV", 
+	"solar_pv_conversion_efficiency": 0.20,
+	"solar_pv_system_size_Wp": 4000,
+	"solar_pv_cost": 6000.00,
+	"solar_pv_currency": "GBP"
+}
+]

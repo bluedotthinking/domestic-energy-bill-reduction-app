@@ -1,0 +1,36 @@
+[
+{
+	"heating_system_id": 0,
+	"objectType": "heating",
+	"country": "UK", 
+	"heating_system_name": "Typical Gas Boiler",
+	"heating_system_type": "Gas Boiler",
+	"heating_system_fuel_type":"natural_gas",
+	"heating_system_efficiency":1.00,
+	"heating_system_fuel_type":"gas",
+	"heating_system_cost": 2000,
+	"heating_system_currency": "GBP"
+},
+{
+	"heating_system_id": 1,
+	"objectType": "heating",
+	"country": "UK", 
+	"heating_system_name": "Typical Air Source Heat Pump (High Temp)",
+	"heating_system_type": "Air Source Heat Pump",
+	"heating_system_fuel_type":"electricity",    			 
+	"heating_system_efficiency":2.61,				
+	"heating_system_max_power_watts": 5000,
+	"heating_system_coefficient_of_performance": [
+	{
+		"temperature_celsius": 7.0,
+		"cop_value": 2.61
+	},
+	{
+		"temperature_celsius": 2.0,
+		"cop_value": 2.14
+	}
+	],
+	"heating_system_cost": 10000,
+	"heating_system_currency": "GBP"
+}
+]

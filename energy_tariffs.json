@@ -1,0 +1,43 @@
+[
+{
+ "tariff_id": 0,
+ "tariff_name":"Flexible Octopus - April 2022 Price Cap",
+ "supplier_id": 0,
+ "supplier_name": "Octopus Energy", 
+ "tariff_type":"flat",
+ "tariff_requires_smart_meter":false, 
+ "tariff_rates":[
+ 			{"fuel":"electricity",
+   			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
+ 			 "unit_rate":0.2763, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			{"fuel":"gas",
+   			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
+ 			 "unit_rate":0.0728, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
+ 	],
+ "tariff_standing_charge":[{"fuel":"gas", "cost":0.2722, "frequency":"daily"},
+ 					{"fuel":"electricity", "cost":0.4448, "frequency":"daily"}],
+ "tariff_updated_on":"2022-04-02T00:00:00"
+},
+{
+ "tariff_id": 1,
+ "tariff_name":"Octopus Go - 4H 0030-0430",
+ "supplier_id": 0,
+ "supplier_name": "Octopus Energy", 
+ "tariff_type":"tou",
+ "tariff_requires_smart_meter":true,
+ "tariff_rates":[
+ 			{"fuel":"electricity",
+ 			"period_name":"off-peak", "start_settlement_period":1,"last_settlement_period":8, 
+ 			 "unit_rate":0.075, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			{"fuel":"electricity",
+   			 "period_name":"peak", "start_settlement_period":9,"last_settlement_period":0,
+ 			 "unit_rate":0.3023, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			{"fuel":"gas",
+   			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
+ 			 "unit_rate":0.06, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
+ 	],
+ "tariff_standing_charge":[{"fuel":"gas", "cost":0.1437, "frequency":"daily"},
+ 					{"fuel":"electricity", "cost":0.2376, "frequency":"daily"}],
+ "tariff_updated_on":"2022-03-03T16:54:00" 					
+}
+]

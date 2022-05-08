@@ -1,0 +1,24 @@
+[
+{
+    "battery_storage_id": 0,
+	"objectType": "batteryStorage",
+	"country": "UK", 	
+	"battery_storage_name": "No Battery Storage",
+	"battery_storage_capacity_Wh": 0,
+	"battery_storage_charging_efficiency": 1.00,
+	 "battery_storage_cost": 0,
+	 "battery_storage_currency": "GBP"
+},
+{
+    "battery_storage_id": 1,
+	"objectType": "batteryStorage",
+	"country": "UK", 	
+	"battery_storage_name": "Tesla Powerwall 2 (1 unit)",
+	"battery_storage_max_discharge_rate_watts": 7000,
+	"battery_storage_max_charge_rate_watts": 5000,
+	"battery_storage_capacity_Wh": 13500,
+	"battery_storage_charging_efficiency": 0.95,
+	"battery_storage_cost": 9400,
+	"battery_storage_currency": "GBP"
+}
+]

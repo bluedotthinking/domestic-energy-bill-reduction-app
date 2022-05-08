@@ -1,0 +1,22 @@
+[
+{
+	"ev_charger_id": 0,
+	"objectType": "evHomeCharger",
+	"country": "UK",
+	"ev_charger_name": "Standard 3-Pin Home Socket",
+	"ev_charger_max_charge_rate_watts": 2000,
+	"ev_charger_efficiency": 0.95,
+	"ev_charger_cost": 0,
+	"ev_charger_currency": "GBP"
+},
+{
+	"ev_charger_id": 1,
+	"objectType": "evHomeCharger",
+	"country": "UK",
+	"ev_charger_name": "7kW EV Charger",
+	"ev_charger_max_charge_rate_watts": 7400,
+	"ev_charger_efficiency": 0.95,
+	"ev_charger_cost": 950,
+	"ev_charger_currency": "GBP"
+}
+]

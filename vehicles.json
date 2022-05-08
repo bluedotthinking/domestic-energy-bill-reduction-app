@@ -1,0 +1,26 @@
+[
+{
+	"vehicle_id": 0,
+	"objectType": "vehicle",
+	"country": "UK",
+	"vehicle_name": "Typical Petrol/Diesel Car",
+	"vehicle_type": "ICE Vehicle",
+	"vehicle_fuel_type":"gasoline",
+	"vehicle_miles_per_gallon": 40,
+	"vehicle_cost": 37000,
+	"vehicle_currency": "GBP"
+},
+{
+	"vehicle_id": 1,
+	"objectType": "vehicle",
+	"country": "UK",
+	"vehicle_name": "Typical EV",
+	"vehicle_type": "Electric Vehicle",
+	"vehicle_fuel_type":"electricity",
+	"vehicle_wh_per_mile": 250,
+	"vehicle_max_charge_rate_watts": 250000,
+	"vehicle_battery_capacity_Wh": 70000,
+	"vehicle_cost": 50000,
+	"vehicle_currency": "GBP"
+}
+]
