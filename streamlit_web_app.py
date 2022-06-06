@@ -29,7 +29,8 @@ with st.sidebar.expander("My Region & Energy Usage"):
 	elec_kWh_slider = st.select_slider(
 		 'Annual Electricity Consumption (kWh):',
 		 options=annual_electricity_consumption_kWh,
-		 value=2900
+		 value=2900,
+		 help='Excluding Heat Pumps, EVs, Battery Storage'
 		 )
 
 	annual_gas_consumption_kWh = np.sort(summary_results_df['annual_gas_consumption_kWh'].unique())
@@ -804,6 +805,7 @@ options = {
 st_echarts(options=options)
 
 
+
 generation_export_options = {
   "tooltip": {
     "trigger": 'axis',
@@ -865,6 +867,14 @@ generation_export_options = {
 }
 
 
-st.subheader('Generation & Export')
-st_echarts(options=generation_export_options)
+
+
+if (current_solar_pv_system != 'No Solar PV') | (future_solar_pv_system != 'No'):
+	st.subheader('Generation & Export')
+	st_echarts(options=generation_export_options)
+	
+# else:
+# 	st.markdown("<h1 style='text-align: center; color: red;'>Some title</h1>", unsafe_allow_html=True)
+
+# 	st.write('No Solar PV')
 
