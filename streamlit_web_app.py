@@ -18,7 +18,6 @@ summary_results_df['Products'] = summary_results_df[cols].apply(lambda row: ' | 
 st.sidebar.title('Domestic Energy Bill Reduction Application (DEBRA)')
 
 with st.sidebar.expander("My Region & Energy Usage"):
-
 	location_name = st.selectbox(
 		 'Current Location',
 		 np.sort(summary_results_df['location_name'].unique()),
@@ -30,20 +29,22 @@ with st.sidebar.expander("My Region & Energy Usage"):
 		 'Annual Electricity Consumption (kWh):',
 		 options=annual_electricity_consumption_kWh,
 		 value=2900,
-		 help='Excluding Heat Pumps, EVs, Battery Storage'
+		 help='Excluding Heat Pumps, EVs, Battery Storage - Defaults to UK avg'
 		 )
 
 	annual_gas_consumption_kWh = np.sort(summary_results_df['annual_gas_consumption_kWh'].unique())
 	gas_kWh_slider = st.select_slider(
 		 'Annual Gas Consumption (kWh):',
 		 options=annual_gas_consumption_kWh,
-		 value=12000
+		 value=12000,
+		 help='Defaults to UK avg'
 		 )
 
 	daily_miles_driven = st.select_slider(
 		 'Select average miles driven per day:',
 		 options=[20,50,100],
-		 value=20
+		 value=20,
+		 help='Defaults to UK avg'
 		 )
 
 with st.sidebar.expander("Currently Installed"):
@@ -164,7 +165,7 @@ with st.sidebar.expander("Technologies to Consider"):
     
 budget = st.sidebar.slider('Budget (£)', 0, 50000, 30000, step=500)
     
-vehicle_fuel_cost_per_litre = st.sidebar.slider('Vehicle Fuel Cost (£/litre)', 1.00, 2.50, 1.65, step=0.01)
+vehicle_fuel_cost_per_litre = st.sidebar.slider('Vehicle Fuel Cost (£/litre)', 1.00, 2.50, 1.90, step=0.01)
 
 st.sidebar.write('Kindly supported by [Climate Subak](https://climatesubak.org/)')
 
@@ -281,11 +282,12 @@ n_scenarios = len(summary_results_df.loc[future_potential_cond].index)
 
 col1, col2 = st.columns([1,2])
 with col2:
-
+ 
 	st.subheader('Select a scenario:',)	
 	display_cols = ['Annual Savings','Investment','Products','scenario_id']
 	gb = GridOptionsBuilder.from_dataframe(summary_results_df.loc[future_potential_cond][display_cols])	
 	gb.configure_selection('single', pre_selected_rows=[0], use_checkbox=True)	
+# 	gb.configure_selection('single', use_checkbox=True)		
 
 	grid_response = AgGrid(
 		summary_results_df.loc[future_potential_cond][display_cols],
@@ -302,12 +304,21 @@ with col2:
 		autoHeight=True
 	)
 	df = grid_response['data']
+	print ('grid_response')	
+	print (grid_response)
+
 	selected = grid_response['selected_rows']
-	selected_df = pd.DataFrame(selected).apply(pd.to_numeric, errors='coerce')
-	
-	selected_scenario_id = selected[0]['scenario_id']
+# 	If this is the first pass, and the user hasn't made a selection yet, we'll default 
+# 	to the top row in the chart
+	if len(selected) == 0:
+		selected_scenario_id = df['scenario_id'].values[0]
+# 	If the user has clicked on a different row, we should use the scenario_id from that row
+	else:
+		selected_df = pd.DataFrame(selected).apply(pd.to_numeric, errors='coerce')	
+		selected_scenario_id = selected[0]['scenario_id']
+		
 	selected_future_scenario_cond = (summary_results_df['scenario_id']==selected_scenario_id)
-	
+
 
 future_elec_standing_charge = summary_results_df.loc[selected_future_scenario_cond]['electricity_standing_charge_annual'].values[0]
 
@@ -431,16 +442,22 @@ st.subheader('Products Installed')
 
 col3, col4 = st.columns(2)
 
+# TODO - Update this to a Ag-Grid table, for a cleaner feel and better alignment between rows!
+
+with col3:
+	st.write('Changes')
+with col4:		
+	st.write('Investment (£)')
 if summary_results_df.loc[current_cond]['heating_system_name'].values[0] != summary_results_df.loc[selected_future_scenario_cond]['heating_system_name'].values[0]:
 	with col3:
 		st.write('')
 		st.write('')		
 		st.write('Upgrade',summary_results_df.loc[current_cond]['heating_system_name'].values[0],'to',summary_results_df.loc[selected_future_scenario_cond]['heating_system_name'].values[0])
 	with col4:
-		heating_system_installed_cost = st.number_input(label='Investment (£)', min_value=0, max_value=None, value=int(summary_results_df.loc[selected_future_scenario_cond]['heating_system_cost'].values[0]))
+
+		heating_system_installed_cost = st.number_input(label='', min_value=0, max_value=None, value=int(summary_results_df.loc[selected_future_scenario_cond]['heating_system_cost'].values[0]))
 else:
 	heating_system_installed_cost = 0
-
 
 if summary_results_df.loc[current_cond]['solar_pv_name'].values[0] != summary_results_df.loc[selected_future_scenario_cond]['solar_pv_name'].values[0]:
 	with col3:
@@ -449,11 +466,14 @@ if summary_results_df.loc[current_cond]['solar_pv_name'].values[0] != summary_re
 		st.write('Upgrade',summary_results_df.loc[current_cond]['solar_pv_name'].values[0],'to',summary_results_df.loc[selected_future_scenario_cond]['solar_pv_name'].values[0])
 	with col4:
 		solar_pv_installed_cost = st.number_input(label='', min_value=0, max_value=None, value=int(summary_results_df.loc[selected_future_scenario_cond]['solar_pv_cost'].values[0]))
+
 else:
 	solar_pv_installed_cost = 0
 
 if summary_results_df.loc[current_cond]['battery_storage_name'].values[0] != summary_results_df.loc[selected_future_scenario_cond]['battery_storage_name'].values[0]:
 	with col3:
+# 		st.write('')
+# 		st.write('')
 		st.write('')
 		st.write('')		
 		st.write('Upgrade',summary_results_df.loc[current_cond]['battery_storage_name'].values[0],'to',summary_results_df.loc[selected_future_scenario_cond]['battery_storage_name'].values[0])
@@ -466,12 +486,23 @@ else:
 if summary_results_df.loc[current_cond]['ev_charger_name'].values[0] != summary_results_df.loc[selected_future_scenario_cond]['ev_charger_name'].values[0]:
 	with col3:
 		st.write('')
-		st.write('')		
+		st.write('')
 		st.write('Upgrade',summary_results_df.loc[current_cond]['ev_charger_name'].values[0],'to',summary_results_df.loc[selected_future_scenario_cond]['ev_charger_name'].values[0])
 	with col4:
 		ev_charger_installed_cost = st.number_input(label='', min_value=0, max_value=None, value=int(summary_results_df.loc[selected_future_scenario_cond]['ev_charger_cost'].values[0]))	
 else:
 	ev_charger_installed_cost = 0
+
+
+if summary_results_df.loc[current_cond]['vehicle_name'].values[0] != summary_results_df.loc[selected_future_scenario_cond]['vehicle_name'].values[0]:
+	with col3:
+		st.write('')
+		st.write('')		
+		st.write('Upgrade',summary_results_df.loc[current_cond]['vehicle_name'].values[0],'to',summary_results_df.loc[selected_future_scenario_cond]['vehicle_name'].values[0])
+	with col4:
+		st.write('')
+		st.write('N/A - Assumes both vehicles are leased')
+
 
 
 
@@ -535,6 +566,8 @@ total_investment_cost = (heating_system_installed_cost+
 
 payback_years = int(np.ceil(total_investment_cost/cost_savings))
 
+st.write("---") # horizontal separator line.
+
 col8, col9 = st.columns(2)
 
 with col9:
@@ -543,7 +576,7 @@ with col9:
 with col8:
 	if cost_savings <= 0.:
 # 		payback_years = float('inf')
-		st.metric(label="Payback", value='N/A')	
+		st.metric(label="Payback", value='N/A')
 	else:
 		st.metric(label="Payback", value=str(payback_years)+' years')	
 # 	total_cost = st.number_input(label='Total Investment', min_value=None, max_value=None, value=int(total_investment_cost), disabled=True)
