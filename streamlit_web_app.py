@@ -46,120 +46,6 @@ with st.sidebar.expander("My Region & Energy Usage"):
 		 help='Defaults to UK avg'
 		 )
 
-# with st.sidebar.expander("Currently Installed"):
-# 
-# 	current_heating_system = st.selectbox(
-# 		 'Current Heating System',
-# 		 summary_results_df['heating_system_name'].unique()
-# 		 )
-# 
-# 	current_solar_pv_system = st.selectbox(
-# 		 'Current Solar PV system',
-# 		 summary_results_df['solar_pv_name'].unique()
-# 		 )
-# 
-# 	current_battery_storage_system = st.selectbox(
-# 		 'Current Battery Storage',
-# 		 summary_results_df['battery_storage_name'].unique()
-# 		 )
-# 
-# 	current_vehicle = st.selectbox(
-# 		 'Current Vehicle',
-# 		 summary_results_df['vehicle_name'].unique()
-# 		 )
-# 
-# 	current_ev_charger = st.selectbox(
-# 		 'Current EV Charger',
-# 		 summary_results_df['ev_charger_name'].unique()
-# 		 )
-# 		 
-# 	current_energy_tariff = st.selectbox(
-# 		 'Current Energy Tariff',
-# 		 summary_results_df['tariff_name'].unique()
-# 		 )
-
-
-# with st.sidebar.expander("Technologies to Consider"):
-# 
-# 	future_heating_system = st.multiselect(
-# 				'Future Heating Systems:',
-# 				summary_results_df['heating_system_name'].unique(),
-# 				summary_results_df['heating_system_name'].unique()
-# # 				['Average Gas Boiler','Air Source Heat Pump'],
-# # 		 		['Average Gas Boiler','Air Source Heat Pump']
-# 		 		 )
-# 
-# 
-# 	future_solar_pv_system = st.selectbox(
-# 		 'Solar PV?',
-# 		 ('Yes','No')
-# 		 )
-# 	if future_solar_pv_system == 'Yes':
-# 		solar_pv_size = st.slider('Solar PV Size (kW)', 1.0, 10.0, 4.5, step=0.5, 
-# 				help='Rated Power in kiloWatts, Assume South-facing @ 35Deg Slope')
-# 		
-# 		solar_pv_option = summary_results_df['solar_pv_name'].unique()
-# 	else:
-# 		solar_pv_size = 0.
-# 		solar_pv_option = ['No Solar PV']
-# 
-# 
-# 	future_battery_storage_system = st.selectbox(
-# 		 'Battery Storage?',
-# 		 ('Yes','No')
-# 		 )
-# 	if future_battery_storage_system == 'No':
-# 		battery_storage_option = ['No Battery Storage']
-# 	else:
-# 		# battery_storage_option = summary_results_df['battery_storage_name'].unique()
-# 		battery_storage_option = st.multiselect(
-# 					'Future Battery Storage',
-# 					summary_results_df['battery_storage_name'].unique(),
-# 					summary_results_df['battery_storage_name'].unique())
-# 
-# 		
-# 	electric_vehicle_option = st.selectbox(
-# 		 'Electric Vehicle?',
-# 		 ('Yes','No')
-# 		 )
-# 
-# 	if electric_vehicle_option == 'No':
-# 		future_vehicle = ['Typical Petrol Car']
-# 	else:
-# 		# battery_storage_option = summary_results_df['battery_storage_name'].unique()
-# 		future_vehicle = st.multiselect(
-# 					'Future Vehicle',
-# 					summary_results_df['vehicle_name'].unique(),
-# 					summary_results_df['vehicle_name'].unique())		
-# 
-# 	future_ev_charger = st.selectbox(
-# 		 'EV Charger?',
-# 		 ('Yes','No')
-# 		 )
-# 	if future_ev_charger == 'No':
-# 		ev_charger_option = ['Standard 3-Pin Home Socket']
-# 	else:
-# # 		ev_charger_option = summary_results_df['ev_charger_name'].unique()
-# 		ev_charger_option = st.multiselect(
-# 					'Future EV Charger',
-# 					summary_results_df['ev_charger_name'].unique(),
-# 					summary_results_df['ev_charger_name'].unique())
-# 
-# 
-# 	future_smart_meter = st.selectbox(
-# 		 'Smart Meters',
-# 		 ['Yes','No']
-# 		 )
-# 	if future_smart_meter == 'Yes':
-# 		smart_meter_option = [True]
-# 	else:
-# 		smart_meter_option = [False]
-# 		
-# 	energy_tariff_option = st.multiselect(
-# 		 'Future Energy Tariffs',
-# 		 summary_results_df['tariff_name'].unique(),
-# 		 summary_results_df['tariff_name'].unique()
-# 		 )
 
 with st.sidebar.expander("Heating"):
 	current_heating_system = st.selectbox(
@@ -235,10 +121,6 @@ with st.sidebar.expander("Energy Tariff"):
 		 'Current',
 		 summary_results_df['tariff_name'].unique()
 		 )
-# 	electricity_meter_type = st.selectbox(
-# 		 'Meter Type',
-# 		 ['Smart','Non-Smart']
-# 		 )
 
 	st.markdown("""---""")
 	energy_tariff_option = st.multiselect(
@@ -316,15 +198,6 @@ summary_results_df['Vehicle'] = ''
 summary_results_df['Vehicle'].loc[summary_results_df['vehicle_name']!=current_vehicle] = '✓'
 
 
-# column_names = ['Heating','battery_storage_change','solar_pv_change','tariff_change','ev_charger_change','vehicle_change']
-# summary_results_df['Product Changes'] = summary_results_df[column_names].sum(axis=1)
-
-# (summary_results_df['heating_system_change'] +
-# 										 summary_results_df['battery_storage_change'] + 
-# 										 summary_results_df['solar_pv_change'] + 
-# 										 summary_results_df['tariff_change'] + 
-# 										 summary_results_df['ev_charger_change'] + 
-# 										 summary_results_df['vehicle_change'])
 
 current_elec_standing_charge = summary_results_df.loc[current_cond]['electricity_standing_charge_annual'].values[0]
 current_elec_cost = summary_results_df.loc[current_cond]['grid_elec_import_cost'].values[0] - summary_results_df.loc[current_cond]['electricity_export_income'].values[0] + summary_results_df.loc[current_cond]['electricity_standing_charge_annual'].values[0]
@@ -529,7 +402,12 @@ if summary_results_df.loc[current_cond]['ev_charger_name'].values[0] != summary_
 	product_to.append(summary_results_df.loc[selected_future_scenario_cond]['ev_charger_name'].values[0])
 	product_investment_cost.append(int(summary_results_df.loc[selected_future_scenario_cond]['ev_charger_cost'].values[0]))
 		
+if summary_results_df.loc[current_cond]['tariff_name'].values[0] != summary_results_df.loc[selected_future_scenario_cond]['tariff_name'].values[0]:
 
+	product_type.append('Energy Tariff')
+	product_from.append(summary_results_df.loc[current_cond]['tariff_name'].values[0])
+	product_to.append(summary_results_df.loc[selected_future_scenario_cond]['tariff_name'].values[0])
+	product_investment_cost.append(0)
 
 current_bill = current_ice_fuel_cost+current_gas_cost+current_elec_cost
 future_bill = future_ice_fuel_cost+future_gas_cost+future_elec_cost
@@ -601,28 +479,8 @@ options = {
     ]
 }
 
-# col1, col2 = st.columns([2,1])
-# with col1:
 
-# with col2:
-
-
-
-# col5, col6 = st.columns(2)
-# 
-# with col6:
-# 	option = st.selectbox(
-# 		 'Scenario Picker',
-# 		 (summary_results_df['Products'])
-# 		 )
-# 	st.write('You selected:', option)
-	
-st.markdown("""---""")
-
-# st.subheader('Products Installed')
-
-
-						   
+st.markdown("""---""")						   
 						   
 col3, col4 = st.columns([3,1])						   
 
@@ -682,13 +540,12 @@ with col4:
 	if change_ice_fuel_cost == 0:	
 		st.write('No Change')
 				
-# 	st.markdown(new_title, unsafe_allow_html=True)
-
-# 	st.metric(label="Gas", value=future_bill, delta=cost_savings,
-# 				delta_color = 'inverse')
 
 st.subheader('Product Upgrades')
-# with col4:
+
+st.markdown("_Adjust investment cost manually by editing the numbers in the cell - payback and total investment figures will update_", unsafe_allow_html=False)
+
+
 grid_return = AgGrid(changes_df, editable=True,
 					fit_columns_on_grid_load=True,
 					width=[5,1,1,1],
@@ -705,80 +562,6 @@ total_investment_cost = (changes_df['Cost'].astype(int).sum())
 
 payback_years = int(np.ceil(total_investment_cost/cost_savings))
 
-# with col4:
-# 
-# 	st.write('')
-# 	st.write('')	
-# 	st.write('')
-# 	st.write('')
-# 	st.write('')		
-# 	if cost_savings <= 0.:
-# # 		payback_years = float('inf')
-# 		st.metric(label="Payback", value='N/A')
-# 	else:
-# 		st.metric(label="Payback", value=str(payback_years)+' years')	
-# 
-# 	st.metric(label="Total Investment", value='£'+str(total_investment_cost))		
-	
-
-
-# 		st.write('Keep '+summary_results_df.loc[current_cond]['heating_system_name'].values[0])
-# 	else:
-# 		heating_system_installed_cost = st.number_input(label='Heating', min_value=0, max_value=None, value=int(summary_results_df.loc[selected_future_scenario_cond]['heating_system_cost'].values[0]))
-# 		st.write('Upgrade',summary_results_df.loc[current_cond]['heating_system_name'].values[0],'to',summary_results_df.loc[selected_future_scenario_cond]['heating_system_name'].values[0])
-
-# col3, col4, col5, col6, col7 = st.columns(5)
-# with col3:
-# 	
-# 	if summary_results_df.loc[current_cond]['heating_system_name'].values[0] == summary_results_df.loc[selected_future_scenario_cond]['heating_system_name'].values[0]:
-# 		heating_system_installed_cost = st.number_input(label='Heating', min_value=0, max_value=None, value=0)
-# 		st.write('Keep '+summary_results_df.loc[current_cond]['heating_system_name'].values[0])
-# 	else:
-# 		heating_system_installed_cost = st.number_input(label='Heating', min_value=0, max_value=None, value=int(summary_results_df.loc[selected_future_scenario_cond]['heating_system_cost'].values[0]))
-# 		st.write('Upgrade',summary_results_df.loc[current_cond]['heating_system_name'].values[0],'to',summary_results_df.loc[selected_future_scenario_cond]['heating_system_name'].values[0])
-# 	
-# with col4:
-# 	if summary_results_df.loc[current_cond]['solar_pv_name'].values[0] == summary_results_df.loc[selected_future_scenario_cond]['solar_pv_name'].values[0]:
-# 		solar_pv_installed_cost = st.number_input(label='Solar PV', min_value=0, max_value=None, value=0)
-# 		st.write('Keep '+summary_results_df.loc[current_cond]['solar_pv_name'].values[0])
-# 	else:
-# 		solar_pv_installed_cost = st.number_input(label='Solar PV', min_value=0, max_value=None, value=int(summary_results_df.loc[selected_future_scenario_cond]['solar_pv_cost'].values[0]))
-# 
-# 		st.write('Upgrade',summary_results_df.loc[current_cond]['solar_pv_name'].values[0],'to',summary_results_df.loc[selected_future_scenario_cond]['solar_pv_name'].values[0])
-# 
-# with col5:
-# 	if summary_results_df.loc[current_cond]['battery_storage_name'].values[0] == summary_results_df.loc[selected_future_scenario_cond]['battery_storage_name'].values[0]:
-# 		battery_storage_installed_cost = st.number_input(label='Battery Storage', min_value=0, max_value=None, value=0)
-# 		st.write('Keep '+summary_results_df.loc[current_cond]['battery_storage_name'].values[0])
-# 	else:
-# 		battery_storage_installed_cost = st.number_input(label='Battery Storage', min_value=0, max_value=None, value=int(summary_results_df.loc[selected_future_scenario_cond]['battery_storage_cost'].values[0]))
-# 		st.write('Upgrade',summary_results_df.loc[current_cond]['battery_storage_name'].values[0],'to',summary_results_df.loc[selected_future_scenario_cond]['battery_storage_name'].values[0])
-# 
-# with col6:
-# 
-# 	if summary_results_df.loc[current_cond]['ev_charger_name'].values[0] == summary_results_df.loc[selected_future_scenario_cond]['ev_charger_name'].values[0]:
-# 		ev_charger_installed_cost = st.number_input(label='EV Charger', min_value=0, max_value=None, value=0)
-# 		st.write('Keep '+summary_results_df.loc[current_cond]['ev_charger_name'].values[0])
-# 	else:
-# 		ev_charger_installed_cost = st.number_input(label='EV Charger', min_value=0, max_value=None, value=int(summary_results_df.loc[selected_future_scenario_cond]['ev_charger_cost'].values[0]))	
-# 		st.write('Upgrade',summary_results_df.loc[current_cond]['ev_charger_name'].values[0],'to',summary_results_df.loc[selected_future_scenario_cond]['ev_charger_name'].values[0])
-# 
-# 
-# with col7:
-# 
-# 	energy_tariff_cost = st.number_input(label='Energy Tariff', min_value=0, max_value=None, value=0)
-# 
-# 	if summary_results_df.loc[current_cond]['tariff_name'].values[0] == summary_results_df.loc[selected_future_scenario_cond]['tariff_name'].values[0]:
-# 		st.write('Keep '+summary_results_df.loc[current_cond]['tariff_name'].values[0])
-# 	else:
-# 
-# 		st.write('Upgrade',summary_results_df.loc[current_cond]['tariff_name'].values[0],'to',summary_results_df.loc[selected_future_scenario_cond]['tariff_name'].values[0])
-# 
-
-# total_investment_cost = (heating_system_installed_cost+
-# 						 solar_pv_installed_cost+
-# 						 battery_storage_installed_cost+
-# 						 ev_charger_installed_cost)
 
 total_investment_cost = (changes_df['Cost'].astype(int).sum())
 
@@ -795,15 +578,12 @@ with col8:
 		st.metric(label="Payback", value='N/A')
 	else:
 		st.metric(label="Payback", value=str(payback_years)+' years')	
-# 	total_cost = st.number_input(label='Total Investment', min_value=None, max_value=None, value=int(total_investment_cost), disabled=True)
 
-# with col9:
-# 	if cost_savings == 0.:
-# 		payback_years = 0
-# 	else:	
-# 		payback_years = int(np.ceil(total_investment_cost/cost_savings))
-# 	st.write('Investment Paid Back in',payback_years, 'Years')
-# 	total_cost = st.number_input(label='Payback In Years', min_value=None, max_value=None, value=payback_years, disabled=True)
+
+st.markdown("*_Assumes same cost to lease EV as a Petrol/Diesel car_", unsafe_allow_html=False)
+st.markdown("*_No cost associated with switching to new tariff, assumes smart meter can be installed free-of-charge_", unsafe_allow_html=False)
+
+
 	
 st.markdown("""---""")
 
