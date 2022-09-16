@@ -106,7 +106,7 @@ with st.sidebar.expander("Vehicle"):
 with st.sidebar.expander("EV Charger"):
 	current_ev_charger = st.selectbox(
 		 'Current',
-		 summary_results_df['ev_charger_name'].unique()
+		 summary_results_df['ev_charger_name'].unique(),
 		 )
 
 	st.markdown("""---""")
@@ -120,14 +120,15 @@ with st.sidebar.expander("EV Charger"):
 with st.sidebar.expander("Energy Tariff"):
 	current_energy_tariff = st.selectbox(
 		 'Current',
-		 summary_results_df['tariff_name'].unique()
+		 summary_results_df['tariff_name'].unique(),
+		 index=2
 		 )
 
 	st.markdown("""---""")
 	energy_tariff_option = st.multiselect(
 				'Future',
 				summary_results_df['tariff_name'].unique(),
-				summary_results_df['tariff_name'].unique()
+				summary_results_df['tariff_name'].unique()[2]
 				)
 
 with st.expander("ℹ️ - Getting Started", expanded=True):
