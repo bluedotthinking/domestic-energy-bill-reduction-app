@@ -51,13 +51,13 @@
  "tariff_rates":[
  			{"fuel":"electricity",
    			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
- 			 "unit_rate":0.52, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			 "unit_rate":0.34, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
  			{"fuel":"gas",
    			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
- 			 "unit_rate":0.15, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
+ 			 "unit_rate":0.103, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
  	],
- "tariff_standing_charge":[{"fuel":"gas", "cost":0.28, "frequency":"daily"},
- 					{"fuel":"electricity", "cost":0.46, "frequency":"daily"}],
+ "tariff_standing_charge":[{"fuel":"gas", "cost":0.2849, "frequency":"daily"},
+ 					{"fuel":"electricity", "cost":0.4636, "frequency":"daily"}],
  "tariff_updated_on":"2022-08-30T18:33:00" 					
 }
 

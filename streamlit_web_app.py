@@ -39,10 +39,11 @@ with st.sidebar.expander("My Region & Energy Usage"):
 		 help='Defaults to UK avg'
 		 )
 
+	daily_miles_driven_options = np.sort(summary_results_df['daily_miles_driven'].unique())
 	daily_miles_driven = st.select_slider(
 		 'Select average miles driven per day:',
-		 options=[20,50,100],
-		 value=20,
+		 options=daily_miles_driven_options,
+		 value=daily_miles_driven_options[0],
 		 help='Defaults to UK avg'
 		 )
 
@@ -994,48 +995,33 @@ if user_selection_error == False:
 		height="300px",
 	)
 
-
+	st.markdown("""---""")
 
 	option = {
 		"title": {"text": "Typical Day Grid Import (kWh) & Electricity Price (£/kWh)"},
 		"tooltip": {"trigger": "axis"},
 		"legend": {"data": ["Grid Import","Electricity Price"],
-# 					"align":"right",
 					"x":"right",
 					"y":"top"},
 		"grid": {"left": "3%", "right": "4%", "bottom": "3%", "containLabel": True},
-# 		"toolbox": {"feature": {"saveAsImage": {}}},	
 		"xAxis": {
 			"type": "category",
 			"data": list(typical_demand_profile_df.loc[typical_demand_profile_df['scenario_id']==selected_scenario_id]['time'].values),
 		},
-		"yAxis": [{"type": "value", "position": "left",
-
-# 					"axisLabel": {"rotate": "90"},
-					},
-					{"type": "value", "position": "right",}
+		"yAxis": [{"type": "value", "position": "left",},
+					{"type": "value", "position": "right"
+# 					, "show":False
+					}
 					],
 		"series": [
 			{"name":'Grid Import',"data": list(typical_demand_profile_df.loc[typical_demand_profile_df['scenario_id']==selected_scenario_id]['grid_elec_import_Wh'].values/1000.), "type": "bar", "yAxisIndex": 0},
 			{"name":'Electricity Price',"data": list(typical_demand_profile_df.loc[typical_demand_profile_df['scenario_id']==selected_scenario_id]['electricity_unit_rate_per_kWh'].values), "type": "line", "yAxisIndex": 1},
-# 			{"name":'Heat Pump',"data": list(typical_demand_profile_df.loc[typical_demand_profile_df['scenario_id']==selected_scenario_id]['electricity_demand_heatpump_Wh'].values/1000.), "type": "bar","stack": "Total"},						
-# 			{"name":'EV Charging',"data": list(typical_demand_profile_df.loc[typical_demand_profile_df['scenario_id']==selected_scenario_id]['ev_charging_demand_Wh'].values/1000.), "type": "bar","stack": "Total"},			
-			
-# 			{"name":'solar_pv_generation_Wh',"data": list(typical_demand_profile_df.loc[typical_demand_profile_df['scenario_id']==selected_scenario_id]['solar_pv_generation_Wh'].values), "type": "line"}
-			
 			],	
 	}	
 	st_echarts(
 		options=option, 
 		height="300px",
 	)
-# 	grid_elec_import_Wh
-# 	electricity_unit_rate_per_kWh
-# 
-# 	battery_generation_Wh
-# 	battery_charging_demand_Wh
-
-
 else:
 	st.write('No analysis available - please check inputs and try again!')
 	
