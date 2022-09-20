@@ -46,7 +46,8 @@ with st.sidebar.expander("My Region & Energy Usage"):
 		 value=daily_miles_driven_options[0],
 		 help='Defaults to UK avg'
 		 )
-
+	annual_miles_driven = int(daily_miles_driven*365)
+	st.write('Equivalent to',annual_miles_driven,'miles per year')
 
 with st.sidebar.expander("Heating"):
 	current_heating_system = st.selectbox(
@@ -128,7 +129,7 @@ with st.sidebar.expander("Energy Tariff"):
 	energy_tariff_option = st.multiselect(
 				'Future',
 				summary_results_df['tariff_name'].unique(),
-				summary_results_df['tariff_name'].unique()[2]
+				summary_results_df['tariff_name'].unique()[-1]
 				)
 
 with st.expander("ℹ️ - Getting Started", expanded=True):
@@ -139,6 +140,7 @@ with st.expander("ℹ️ - Getting Started", expanded=True):
 -   Use the left-side navigation menu to select your current energy usage; installed products; which products you would consider upgrading to; and the budget you have in mind
 -   Use the table below to pick a scenario you're interested in, and see how those savings are achieved.
 -   Support & contribute to this [open-source project on GitHub](https://github.com/cutmyenergybill/domestic-energy-bill-reduction-app/) - new products, ideas and thoughts welcome!
+-   We're kindly supported by [Climate Subak](https://climatesubak.org/)
 	    """
     )
 
@@ -796,24 +798,8 @@ if user_selection_error == False:
 	}
 
 	st_echarts(options=options_en_bill)
-	# with col10:
-	# 	st.write("")
-	# 
-	# with col11:
-	# 	st.write("""    
-	# 	- Gas consumption down by XkWh
-	# 	- Electricity consumption up by YkWh
-	# 	- This is because of Heat Pump (+Z kWh) and EV (+ZZ kWh)
-	# 	"""
-	# 	)
-
-	# st.write('Current Cost per kWh electricity',current_elec_effective_cost_per_kWh)
-	# st.write('Future Cost per kWh electricity',future_elec_effective_cost_per_kWh)
-
 
 	st.subheader('Electricity Demand')
-
-
 
 	options = {
 	  "tooltip": {
@@ -956,15 +942,12 @@ if user_selection_error == False:
 	}
 
 
-	if (current_solar_pv_system != 'No Solar PV') & (future_solar_pv_system != 'No Solar PV'):
+	if (current_solar_pv_system != 'No Solar PV') | (future_solar_pv_system != 'No Solar PV'):
 		st.subheader('Generation & Export')
 		st_echarts(options=generation_export_options)
 	
 	st.subheader('Half-Hourly Profiles')
 
-# 	print (typical_demand_profile_df.loc[typical_demand_profile_df['scenario_id']==selected_scenario_id]['time'].values)	
-# 	print (typical_demand_profile_df.loc[typical_demand_profile_df['scenario_id']==selected_scenario_id]['grid_elec_import_Wh'].values)
-# 	print (typical_demand_profile_df.loc[typical_demand_profile_df['scenario_id']==selected_scenario_id]['solar_pv_generation_Wh'].values)
 
 	option = {
 		"title": {"text": "Typical Day Electricity Demand (kWh)"},
@@ -1023,6 +1006,53 @@ if user_selection_error == False:
 		options=option, 
 		height="300px",
 	)
+
+	st.markdown("""---""")
+
+	st.subheader('Driving Cost for '+str(int(annual_miles_driven))+' Miles Per Year')
+		
+	col11, col12 = st.columns([1,1])
+
+	with col11:	
+
+		st.markdown('Current: **'+summary_results_df.loc[current_cond]['vehicle_name'].values[0]+'**')
+		if summary_results_df.loc[current_cond]['vehicle_type'].values[0] == 'ICE Vehicle':
+			ice_cost_per_mile_current = current_ice_fuel_cost / annual_miles_driven
+			st.write('£',float("{:.3f}".format(ice_cost_per_mile_current)),'Per Mile')
+			st.write(int(summary_results_df.loc[current_cond]['vehicle_miles_per_gallon'].values[0]),'Miles Per Gallon')
+			st.write(float("{:.1f}".format(summary_results_df.loc[current_cond]['vehicle_litres_fuel_annual'].values[0])),'Litres of Fuel Per Year')
+			st.write('£',vehicle_fuel_cost_per_litre,'Per Litre Fuel Cost')
+						
+		else:
+			ev_elec_cost_current = current_elec_effective_cost_per_kWh * current_ev_demand_Wh /1000.
+			ev_cost_per_mile_current = ev_elec_cost_current / annual_miles_driven			
+			st.write('£',float("{:.3f}".format(ev_cost_per_mile_current)),'Per Mile')
+			st.write(int(summary_results_df.loc[current_cond]['vehicle_wh_per_mile'].values[0]), 'Wh Per Mile')			
+			st.write(float("{:.1f}".format(current_ev_demand_Wh/1000.)),'kWh Per Year for EV Charging')
+			st.write('£',current_elec_effective_cost_per_kWh,'/kWh electricity')
+
+						
+			
+	with col12:
+		
+		st.markdown('Future: **'+summary_results_df.loc[selected_future_scenario_cond]['vehicle_name'].values[0]+'**')
+		if summary_results_df.loc[selected_future_scenario_cond]['vehicle_type'].values[0] == 'ICE Vehicle':
+			ice_cost_per_mile_current = current_ice_fuel_cost / annual_miles_driven
+			st.write('£',float("{:.3f}".format(ice_cost_per_mile_current)),'Per Mile')
+			st.write(int(summary_results_df.loc[selected_future_scenario_cond]['vehicle_miles_per_gallon'].values[0]),'Miles Per Gallon')
+			st.write(float("{:.1f}".format(summary_results_df.loc[selected_future_scenario_cond]['vehicle_litres_fuel_annual'].values[0])),'Litres of Fuel Per Year')
+			st.write('£',vehicle_fuel_cost_per_litre,'Per Litre Fuel Cost')
+			
+		else:
+			ev_elec_cost_future = future_elec_effective_cost_per_kWh * future_ev_demand_Wh /1000.
+			ev_cost_per_mile_future = ev_elec_cost_future / annual_miles_driven			
+			st.write('£',float("{:.3f}".format(ev_cost_per_mile_future)),'Per Mile')			
+			st.write(int(summary_results_df.loc[selected_future_scenario_cond]['vehicle_wh_per_mile'].values[0]), 'Wh Per Mile')			
+			st.write(float("{:.1f}".format(future_ev_demand_Wh/1000.)),'kWh Per Year for EV Charging')
+			st.write('£',future_elec_effective_cost_per_kWh,'/kWh electricity')
+			
+		
+	
 else:
 	st.write('No analysis available - please check inputs and try again!')
 	
