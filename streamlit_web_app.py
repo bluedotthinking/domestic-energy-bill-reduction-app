@@ -16,135 +16,356 @@ summary_results_df['Products'] = summary_results_df[cols].apply(lambda row: '\n'
 
 st.sidebar.title('Domestic Energy Bill Reduction Application (DEBRA)')
 
-with st.sidebar.expander("My Region & Energy Usage"):
-	location_name = st.selectbox(
-		 'Current Location',
-		 np.sort(summary_results_df['location_name'].unique()),
-		 help='To calculate temperature & Solar PV'
-		 )
-
-	annual_electricity_consumption_kWh = np.sort(summary_results_df['annual_electricity_consumption_kWh'].unique())
-	elec_kWh_slider = st.select_slider(
-		 'Annual Electricity Consumption (kWh):',
-		 options=annual_electricity_consumption_kWh,
-		 value=2900,
-		 help='Excluding Heat Pumps, EVs, Battery Storage - Defaults to UK avg'
-		 )
-
-	annual_gas_consumption_kWh = np.sort(summary_results_df['annual_gas_consumption_kWh'].unique())
-	gas_kWh_slider = st.select_slider(
-		 'Annual Gas Consumption (kWh):',
-		 options=annual_gas_consumption_kWh,
-		 value=12000,
-		 help='Defaults to UK avg'
-		 )
-
-	daily_miles_driven_options = np.sort(summary_results_df['daily_miles_driven'].unique())
-	daily_miles_driven = st.select_slider(
-		 'Select average miles driven per day:',
-		 options=daily_miles_driven_options,
-		 value=daily_miles_driven_options[0],
-		 help='Defaults to UK avg'
-		 )
-	annual_miles_driven = int(daily_miles_driven*365)
-	st.write('Equivalent to',annual_miles_driven,'miles per year')
-
-with st.sidebar.expander("Heating"):
-	current_heating_system = st.selectbox(
-		 'Current',
-		 summary_results_df['heating_system_name'].unique()
-		 )
-	st.markdown("""---""")
-
-	future_heating_system = st.multiselect(
-				'Future',
-				summary_results_df['heating_system_name'].unique(),
-				summary_results_df['heating_system_name'].unique()
-				)
-
-
-with st.sidebar.expander("Battery Storage"):
-
-	current_battery_storage_system = st.selectbox(
-		 'Current',
-		 summary_results_df['battery_storage_name'].unique()
-		 )
-		 
-	st.markdown("""---""")
-
-	battery_storage_option = st.multiselect(
-				'Future',
-				summary_results_df['battery_storage_name'].unique(),
-				summary_results_df['battery_storage_name'].unique()
-				)
-
-with st.sidebar.expander("Solar PV"):
-	current_solar_pv_system = st.selectbox(
-		 'Current',
-		 summary_results_df['solar_pv_name'].unique()
-		 )
-	st.markdown("""---""")
-
-	solar_pv_option = st.multiselect(
-				'Future',
-				summary_results_df['solar_pv_name'].unique(),
-				summary_results_df['solar_pv_name'].unique()
-				)
-
-with st.sidebar.expander("Vehicle"):
-	current_vehicle = st.selectbox(
-		 'Current',
-		 summary_results_df['vehicle_name'].unique()
-		 )
-	st.markdown("""---""")
-
-	future_vehicle = st.multiselect(
-				'Future',
-				summary_results_df['vehicle_name'].unique(),
-				summary_results_df['vehicle_name'].unique()
-				)
-
-with st.sidebar.expander("EV Charger"):
-	current_ev_charger = st.selectbox(
-		 'Current',
-		 summary_results_df['ev_charger_name'].unique(),
-		 )
-
-	st.markdown("""---""")
-
-	ev_charger_option = st.multiselect(
-				'Future',
-				summary_results_df['ev_charger_name'].unique(),
-				summary_results_df['ev_charger_name'].unique()
-				)
-
-with st.sidebar.expander("Energy Tariff"):
-	current_energy_tariff = st.selectbox(
-		 'Current',
-		 summary_results_df['tariff_name'].unique(),
-		 index=2
-		 )
-
-	st.markdown("""---""")
-	energy_tariff_option = st.multiselect(
-				'Future',
-				summary_results_df['tariff_name'].unique(),
-				summary_results_df['tariff_name'].unique()[-1]
-				)
-
-with st.expander("ℹ️ - Getting Started", expanded=True):
+with st.sidebar.expander("ℹ️ - Getting Started", expanded=False):
 
     st.write(
         """     
--   The *DEBRA* app is an easy-to-use interface built in Streamlit for UK households to find the most profitable low-carbon upgrades for their properties
--   Use the left-side navigation menu to select your current energy usage; installed products; which products you would consider upgrading to; and the budget you have in mind
--   Use the table below to pick a scenario you're interested in, and see how those savings are achieved.
--   Support & contribute to this [open-source project on GitHub](https://github.com/cutmyenergybill/domestic-energy-bill-reduction-app/) - new products, ideas and thoughts welcome!
--   We're kindly supported by [Climate Subak](https://climatesubak.org/)
-	    """
+The *DEBRA* app is an easy-to-use interface built in Streamlit for UK households to find the most profitable low-carbon upgrades for their properties
+1. Use the tick-boxes to select the technologies you're interested in
+2. Set your preferences for each technology
+3. Pick a scenario that suits your needs (biggest savings selected by default).
+		"""
     )
 
-    st.markdown("") 
+st.sidebar.write('Kindly supported by [Climate Subak](https://climatesubak.org/)')
+
+st.sidebar.write('Contribute to the [GitHub Project](https://github.com/cutmyenergybill/domestic-energy-bill-reduction-app/)')
+
+
+# with st.sidebar.expander("My Region & Energy Usage"):
+# 	location_name = st.selectbox(
+# 		 'Current Location',
+# 		 np.sort(summary_results_df['location_name'].unique()),
+# 		 help='To calculate temperature & Solar PV'
+# 		 )
+# 
+# 	annual_electricity_consumption_kWh = np.sort(summary_results_df['annual_electricity_consumption_kWh'].unique())
+# 	elec_kWh_slider = st.select_slider(
+# 		 'Annual Electricity Consumption (kWh):',
+# 		 options=annual_electricity_consumption_kWh,
+# 		 value=2900,
+# 		 help='Excluding Heat Pumps, EVs, Battery Storage - Defaults to UK avg'
+# 		 )
+# 
+# 	annual_gas_consumption_kWh = np.sort(summary_results_df['annual_gas_consumption_kWh'].unique())
+# 	gas_kWh_slider = st.select_slider(
+# 		 'Annual Gas Consumption (kWh):',
+# 		 options=annual_gas_consumption_kWh,
+# 		 value=12000,
+# 		 help='Defaults to UK avg'
+# 		 )
+# 
+# 	daily_miles_driven_options = np.sort(summary_results_df['daily_miles_driven'].unique())
+# 	daily_miles_driven = st.select_slider(
+# 		 'Select average miles driven per day:',
+# 		 options=daily_miles_driven_options,
+# 		 value=daily_miles_driven_options[0],
+# 		 help='Defaults to UK avg'
+# 		 )
+# 	annual_miles_driven = int(daily_miles_driven*365)
+# 	st.write('Equivalent to',annual_miles_driven,'miles per year')
+
+# with st.sidebar.expander("Heating"):
+# 	current_heating_system = st.selectbox(
+# 		 'Current',
+# 		 summary_results_df['heating_system_name'].unique()
+# 		 )
+# 	st.markdown("""---""")
+# 
+# 	future_heating_system = st.multiselect(
+# 				'Future',
+# 				summary_results_df['heating_system_name'].unique(),
+# 				summary_results_df['heating_system_name'].unique()
+# 				)
+
+
+# with st.sidebar.expander("Battery Storage"):
+# 
+# 	current_battery_storage_system = st.selectbox(
+# 		 'Current',
+# 		 summary_results_df['battery_storage_name'].unique()
+# 		 )
+# 		 
+# 	st.markdown("""---""")
+# 
+# 	battery_storage_option = st.multiselect(
+# 				'Future',
+# 				summary_results_df['battery_storage_name'].unique(),
+# 				summary_results_df['battery_storage_name'].unique()
+# 				)
+
+# with st.sidebar.expander("Solar PV"):
+# 	current_solar_pv_system = st.selectbox(
+# 		 'Current',
+# 		 summary_results_df['solar_pv_name'].unique()
+# 		 )
+# 	st.markdown("""---""")
+# 
+# 	solar_pv_option = st.multiselect(
+# 				'Future',
+# 				summary_results_df['solar_pv_name'].unique(),
+# 				summary_results_df['solar_pv_name'].unique()
+# 				)
+
+# with st.sidebar.expander("Vehicle"):
+# 	current_vehicle = st.selectbox(
+# 		 'Current',
+# 		 summary_results_df['vehicle_name'].unique()
+# 		 )
+# 	st.markdown("""---""")
+# 
+# 	future_vehicle = st.multiselect(
+# 				'Future',
+# 				summary_results_df['vehicle_name'].unique(),
+# 				summary_results_df['vehicle_name'].unique()
+# 				)
+
+# with st.sidebar.expander("EV Charger"):
+# 	current_ev_charger = st.selectbox(
+# 		 'Current',
+# 		 summary_results_df['ev_charger_name'].unique(),
+# 		 )
+# 
+# 	st.markdown("""---""")
+# 
+# 	ev_charger_option = st.multiselect(
+# 				'Future',
+# 				summary_results_df['ev_charger_name'].unique(),
+# 				summary_results_df['ev_charger_name'].unique()
+# 				)
+
+# with st.sidebar.expander("Energy Tariff"):
+# 	current_energy_tariff = st.selectbox(
+# 		 'Current',
+# 		 summary_results_df['tariff_name'].unique(),
+# 		 index=2
+# 		 )
+# 
+# 	st.markdown("""---""")
+# 	energy_tariff_option = st.multiselect(
+# 				'Future',
+# 				summary_results_df['tariff_name'].unique(),
+# 				summary_results_df['tariff_name'].unique()[-1]
+# 				)
+
+
+
+# check_container = st.container()
+
+# with check_container:
+
+with st.expander("1. Choose Technologies to Consider:", expanded=True):
+	col1, col2, col3, col4, col5 = st.columns(5)
+# 	st.header("Technologies To Consider For Upgrade:")
+	with col1:
+		heating_check = st.checkbox('Heating', value=True)
+	with col2:
+		battery_check = st.checkbox('Battery', value=True)
+	with col3:
+		solar_check = st.checkbox('Solar PV', value=True)
+	with col4:
+		tariff_check = st.checkbox('Tariff', value=True)
+	with col5:
+		vehicle_check = st.checkbox('Vehicle', value=True)
+
+	
+with st.expander("2. Set Your Preferences & Energy Usage", expanded=False):
+
+	tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Location, Usage & Budget", "Heating", "Battery","Solar PV","Tariff","Vehicle"])
+
+	with tab1:
+		col1, col2, col3, col4 = st.columns(4)
+
+		with col1:
+			location_name = st.selectbox(
+				 'Select Region',
+				 np.sort(summary_results_df['location_name'].unique()),
+				 help='To calculate temperature & Solar PV'
+				 )
+		
+		with col2:
+			annual_electricity_consumption_kWh = np.sort(summary_results_df['annual_electricity_consumption_kWh'].unique())
+			elec_kWh_slider = st.select_slider(
+				 'Annual Electricity Use (kWh):',
+				 options=annual_electricity_consumption_kWh,
+				 value=2900,
+				 help='Excluding Heat Pumps, EVs, Battery Storage - Defaults to UK avg'
+				 )
+		with col3:
+			annual_gas_consumption_kWh = np.sort(summary_results_df['annual_gas_consumption_kWh'].unique())
+			gas_kWh_slider = st.select_slider(
+				 'Annual Gas Use (kWh):',
+				 options=annual_gas_consumption_kWh,
+				 value=12000,
+				 help='Defaults to UK avg'
+				 )
+		with col4: 
+			daily_miles_driven_options = np.sort(summary_results_df['daily_miles_driven'].unique())
+			daily_miles_driven = st.select_slider(
+				 'Select miles driven per day:',
+				 options=daily_miles_driven_options,
+				 value=daily_miles_driven_options[0],
+				 help='Defaults to UK avg'
+				 )
+			annual_miles_driven = int(daily_miles_driven*365)
+			st.write('Equivalent to',annual_miles_driven,'miles per year')
+		budget = st.slider('Budget (£)', 0, 50000, 30000, step=500)
+	
+		vehicle_fuel_cost_per_litre = st.slider('Vehicle Fuel Cost (£/litre)', 1.00, 2.50, 1.80, step=0.01)
+			
+
+
+	with tab2:
+		col_current, col_future = st.columns(2)
+		with col_current:
+			current_heating_system = st.selectbox('Current',
+			summary_results_df['heating_system_name'].unique()
+			)			
+		with col_future:
+			if heating_check == False:
+				future_heating_system = st.multiselect('Future',
+				summary_results_df['heating_system_name'].unique(),
+				current_heating_system,
+				disabled=True,
+				help='Technology not selected for upgrade by user'
+				)
+			else:
+				future_heating_system = st.multiselect('Future',
+				summary_results_df['heating_system_name'].unique(),
+				summary_results_df['heating_system_name'].unique(),
+				disabled=False
+				)	   
+	   
+	with tab3:
+		col_current, col_future = st.columns(2)
+		with col_current:
+			current_battery_storage_system = st.selectbox(
+				 'Current',
+				 summary_results_df['battery_storage_name'].unique(),
+				 )
+				 
+		with col_future:
+			if battery_check == False:
+				battery_storage_option = st.multiselect(
+				'Future',
+				summary_results_df['battery_storage_name'].unique(),
+				current_battery_storage_system,
+				disabled=True,
+				help='Technology not selected for upgrade by user'
+				 )
+
+			else:
+				battery_storage_option = st.multiselect(
+				'Future',
+				summary_results_df['battery_storage_name'].unique(),
+				summary_results_df['battery_storage_name'].unique(),
+				disabled=False
+				)
+
+	with tab4:
+		col_current, col_future = st.columns(2)
+		with col_current:
+			current_solar_pv_system = st.selectbox(
+				 'Current',
+				 summary_results_df['solar_pv_name'].unique()
+				 )
+				 
+		with col_future:
+			if solar_check == False:
+
+				solar_pv_option = st.multiselect(
+				'Future',
+				summary_results_df['solar_pv_name'].unique(),
+				current_solar_pv_system,
+				disabled=True,
+				help='Technology not selected for upgrade by user'
+				
+				)
+
+			else:
+				solar_pv_option = st.multiselect(
+				'Future',
+				summary_results_df['solar_pv_name'].unique(),
+				summary_results_df['solar_pv_name'].unique(),
+				disabled=False				
+				)
+
+	with tab5:
+		col_current, col_future = st.columns(2)
+		with col_current:
+			current_energy_tariff = st.selectbox(
+				 'Current',
+				 summary_results_df['tariff_name'].unique(),
+				 index=2
+				 )
+
+				 
+		with col_future:
+			if tariff_check == False:
+				energy_tariff_option = st.multiselect(
+				'Future',
+				summary_results_df['tariff_name'].unique(),
+				summary_results_df['tariff_name'].unique()[-1],
+				disabled=True,
+				help='Technology not selected for upgrade by user'
+				)
+
+			else:
+				energy_tariff_option = st.multiselect(
+				'Future',
+				summary_results_df['tariff_name'].unique(),
+				summary_results_df['tariff_name'].unique()[-2:],
+				disabled=False				
+				)
+
+	with tab6:
+		col_current, col_future = st.columns(2)
+		with col_current:
+			current_vehicle = st.selectbox(
+				 'Current Car',
+				 summary_results_df['vehicle_name'].unique()
+				 )
+			current_ev_charger = st.selectbox(
+				 'Current Charger',
+				 summary_results_df['ev_charger_name'].unique(),
+				 )				 
+
+		with col_future:
+			if vehicle_check == False:
+				future_vehicle = st.multiselect(
+				'Future Car',
+				summary_results_df['vehicle_name'].unique(),
+				current_vehicle,
+				disabled=True,
+				help='Technology not selected for upgrade by user'
+				 )
+				 
+				ev_charger_option = st.multiselect(
+				'Future Charger',
+				summary_results_df['ev_charger_name'].unique(),
+				current_ev_charger,
+				disabled=True,
+				help='Technology not selected for upgrade by user'
+				)
+
+
+			else:
+				future_vehicle = st.multiselect(
+				'Future Car',
+				summary_results_df['vehicle_name'].unique(),
+				summary_results_df['vehicle_name'].unique(),
+				disabled=False
+				)
+				
+				ev_charger_option = st.multiselect(
+				'Future Charger',
+				summary_results_df['ev_charger_name'].unique(),
+				summary_results_df['ev_charger_name'].unique(),
+				disabled=False
+				)
+
+											
+
 
 user_selection_error = False
 if (len(future_heating_system) == 0):
@@ -185,13 +406,10 @@ if (len(energy_tariff_option) == 0):
 
 
 
-budget = st.sidebar.slider('Budget (£)', 0, 50000, 30000, step=500)
-    
-vehicle_fuel_cost_per_litre = st.sidebar.slider('Vehicle Fuel Cost (£/litre)', 1.00, 2.50, 1.80, step=0.01)
+# budget = st.sidebar.slider('Budget (£)', 0, 50000, 30000, step=500)
+#     
+# vehicle_fuel_cost_per_litre = st.sidebar.slider('Vehicle Fuel Cost (£/litre)', 1.00, 2.50, 1.80, step=0.01)
 
-st.sidebar.write('Kindly supported by [Climate Subak](https://climatesubak.org/)')
-
-st.sidebar.write('Contribute to the [GitHub Project](https://github.com/cutmyenergybill/domestic-energy-bill-reduction-app/)')
 
 
 summary_results_df['vehicle_fuel_cost'] = (summary_results_df['vehicle_litres_fuel_annual']*vehicle_fuel_cost_per_litre).round(2)
@@ -325,37 +543,35 @@ n_scenarios = len(summary_results_df.loc[future_potential_cond].index)
  
 
  
-st.subheader('Select Your Upgrades:',)	
-display_cols = ['Annual Savings','Investment','Products','scenario_id']
-display_cols = ['Annual Savings','Heating','Battery','Solar PV','Tariff','Vehicle','EV Charger','scenario_id']	
-gb = GridOptionsBuilder.from_dataframe(summary_results_df.loc[future_potential_cond][display_cols])	
-gb.configure_selection('single', pre_selected_rows=[0], use_checkbox=True)	
-# 	gb.configure_selection('single', use_checkbox=True)		
-
-grid_response = AgGrid(
-	summary_results_df.loc[future_potential_cond][display_cols],
-	editable=False,
-	gridOptions=gb.build(),
-	data_return_mode="filtered_and_sorted",
-	update_mode="selection_changed",	
-# 	fit_columns_on_grid_load=True,
-	fit_columns_on_grid_load=False,
-	height=200,
-	theme='streamlit',
-# 	wrapText=True,
-	wrapText=False,		
-# 		checkboxSelection=True,
-# 		autoHeight=True
-)
-df = grid_response['data']
-# print ('grid_response')	
-# print (grid_response)
+# st.subheader('Select Your Upgrades:',)	
+# display_cols = ['Annual Savings','Investment','Products','scenario_id']
+# display_cols = ['Annual Savings','Heating','Battery','Solar PV','Tariff','Vehicle','EV Charger','scenario_id']	
+# gb = GridOptionsBuilder.from_dataframe(summary_results_df.loc[future_potential_cond][display_cols])	
+# gb.configure_selection('single', pre_selected_rows=[0], use_checkbox=True)	
+# # 	gb.configure_selection('single', use_checkbox=True)		
+# 
+# grid_response = AgGrid(
+# 	summary_results_df.loc[future_potential_cond][display_cols],
+# 	editable=False,
+# 	gridOptions=gb.build(),
+# 	data_return_mode="filtered_and_sorted",
+# 	update_mode="selection_changed",	
+# # 	fit_columns_on_grid_load=True,
+# 	fit_columns_on_grid_load=False,
+# 	height=200,
+# 	theme='streamlit',
+# # 	wrapText=True,
+# 	wrapText=False,		
+# # 		checkboxSelection=True,
+# # 		autoHeight=True
+# )
+# df = grid_response['data']
 
 
 
 
 
-selected = grid_response['selected_rows']
+# selected = grid_response['selected_rows']
 # 	If this is the first pass, and the user hasn't made a selection yet, we'll default 
 # 	to the top row in the chart
 
@@ -363,6 +579,33 @@ selected = grid_response['selected_rows']
 
 if user_selection_error == False:
 
+
+	with st.expander("3. Select Your Upgrade Scenario"):
+
+# 		display_cols = ['Annual Savings','Investment','Products','scenario_id']
+		display_cols = ['Annual Savings','Heating','Battery','Solar PV','Tariff','Vehicle','EV Charger','scenario_id']	
+		gb = GridOptionsBuilder.from_dataframe(summary_results_df.loc[future_potential_cond][display_cols])	
+		gb.configure_selection('single', pre_selected_rows=[0], use_checkbox=True)	
+		# 	gb.configure_selection('single', use_checkbox=True)		
+
+		grid_response = AgGrid(
+			summary_results_df.loc[future_potential_cond][display_cols],
+			editable=False,
+			gridOptions=gb.build(),
+			data_return_mode="filtered_and_sorted",
+			update_mode="selection_changed",	
+		# 	fit_columns_on_grid_load=True,
+			fit_columns_on_grid_load=False,
+			height=200,
+			theme='streamlit',
+		# 	wrapText=True,
+			wrapText=False,		
+		# 		checkboxSelection=True,
+		# 		autoHeight=True
+		)
+		df = grid_response['data']
+		selected = grid_response['selected_rows']
+		
 	if len(selected) == 0:
 		selected_scenario_id = df['scenario_id'].values[0]
 	# 	If the user has clicked on a different row, we should use the scenario_id from that row
@@ -1055,4 +1298,4 @@ if user_selection_error == False:
 	
 else:
 	st.write('No analysis available - please check inputs and try again!')
-	
+
