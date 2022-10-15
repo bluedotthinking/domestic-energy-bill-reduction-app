@@ -154,7 +154,7 @@ st.sidebar.write('Contribute to the [GitHub Project](https://github.com/cutmyene
 
 # with check_container:
 
-with st.expander("1. Choose Technologies to Consider:", expanded=True):
+with st.expander("1. Choose Technologies to Consider For Upgrade:", expanded=True):
 	col1, col2, col3, col4, col5 = st.columns(5)
 # 	st.header("Technologies To Consider For Upgrade:")
 	with col1:
