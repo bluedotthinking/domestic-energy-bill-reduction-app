@@ -1,64 +1,116 @@
 [
 {
  "tariff_id": 0,
- "tariff_name":"Flexible Octopus - April 2022 Price Cap",
+ "tariff_name":"flexible Octopus",
  "supplier_id": 0,
  "supplier_name": "Octopus Energy", 
  "tariff_type":"flat",
- "tariff_requires_smart_meter":false, 
+ "tariff_requires_smart_meter":false,
  "tariff_rates":[
- 			{"fuel":"electricity",
+ 			{"fuel":"electricity","direction":"import",
    			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
- 			 "unit_rate":0.2763, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
- 			{"fuel":"gas",
+ 			 "unit_rate":0.3281, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			 {"fuel":"electricity","direction":"export",
+   			 "period_name":"seg-all-day", "start_settlement_period":0,"last_settlement_period":47,
+ 			 "unit_rate":0.041, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			{"fuel":"gas","direction":"import",
    			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
- 			 "unit_rate":0.0728, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
+ 			 "unit_rate":0.1024, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
  	],
- "tariff_standing_charge":[{"fuel":"gas", "cost":0.2722, "frequency":"daily"},
- 					{"fuel":"electricity", "cost":0.4448, "frequency":"daily"}],
- "tariff_updated_on":"2022-04-02T00:00:00"
+ "tariff_standing_charge":[{"fuel":"gas", "cost":0.2684, "frequency":"daily"},
+ 					{"fuel":"electricity", "cost":0.4412, "frequency":"daily"}],
+ "tariff_updated_on":"2023-02-03T00:00:00" 					
 },
 {
  "tariff_id": 1,
- "tariff_name":"Octopus Go July 2022 v1",
+ "tariff_name":"Octopus Go",
  "supplier_id": 0,
  "supplier_name": "Octopus Energy", 
  "tariff_type":"tou",
  "tariff_requires_smart_meter":true,
  "tariff_rates":[
- 			{"fuel":"electricity",
+ 			{"fuel":"electricity","direction":"import",
  			"period_name":"off-peak", "start_settlement_period":1,"last_settlement_period":8, 
- 			 "unit_rate":0.075, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
- 			{"fuel":"electricity",
+ 			 "unit_rate":0.120, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			{"fuel":"electricity","direction":"import",
    			 "period_name":"peak", "start_settlement_period":9,"last_settlement_period":0,
- 			 "unit_rate":0.3935, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
- 			{"fuel":"gas",
+ 			 "unit_rate":0.4111, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			 {"fuel":"electricity","direction":"export",
    			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
- 			 "unit_rate":0.103, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
+ 			 "unit_rate":0.041, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}, 			 
+ 			{"fuel":"gas","direction":"import",
+   			 "period_name":"seg-all-day", "start_settlement_period":0,"last_settlement_period":47,
+ 			 "unit_rate":0.1024, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
  	],
- "tariff_standing_charge":[{"fuel":"gas", "cost":0.2849, "frequency":"daily"},
- 					{"fuel":"electricity", "cost":0.4448, "frequency":"daily"}],
- "tariff_updated_on":"2022-09-20T19:01:00" 					
+ "tariff_standing_charge":[{"fuel":"gas", "cost":0.2684, "frequency":"daily"},
+ 					{"fuel":"electricity", "cost":0.4422, "frequency":"daily"}],
+ "tariff_updated_on":"2023-02-03T00:00:00" 					
 },
-
 {
  "tariff_id": 2,
- "tariff_name":"October 2022 Price Cap",
+ "tariff_name":"Octopus Flux",
  "supplier_id": 0,
- "supplier_name": "Ofgem", 
- "tariff_type":"flat",
- "tariff_requires_smart_meter":false,
+ "supplier_name": "Octopus Energy", 
+ "tariff_type":"tou",
+ "tariff_requires_smart_meter":true,
  "tariff_rates":[
- 			{"fuel":"electricity",
-   			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
- 			 "unit_rate":0.34, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
- 			{"fuel":"gas",
-   			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
- 			 "unit_rate":0.103, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
- 	],
- "tariff_standing_charge":[{"fuel":"gas", "cost":0.2849, "frequency":"daily"},
- 					{"fuel":"electricity", "cost":0.4636, "frequency":"daily"}],
- "tariff_updated_on":"2022-09-20T19:01:00" 					
-}
+ 			{"fuel":"electricity","direction":"import",
+ 			"period_name":"off-peak", "start_settlement_period":4,"last_settlement_period":9, 
+ 			 "unit_rate":0.1944, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			{"fuel":"electricity","direction":"import",
+   			 "period_name":"day-part-1", "start_settlement_period":10,"last_settlement_period":31,
+ 			 "unit_rate":0.324, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			{"fuel":"electricity","direction":"import",
+   			 "period_name":"peak", "start_settlement_period":32,"last_settlement_period":37,
+ 			 "unit_rate":0.4536, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			{"fuel":"electricity","direction":"import",
+   			 "period_name":"day-part-2", "start_settlement_period":38,"last_settlement_period":3,
+ 			 "unit_rate":0.324, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
 
+ 			{"fuel":"electricity","direction":"export",
+ 			"period_name":"off-peak", "start_settlement_period":4,"last_settlement_period":9, 
+ 			 "unit_rate":0.0844, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			{"fuel":"electricity","direction":"export",
+   			 "period_name":"day-part-1", "start_settlement_period":10,"last_settlement_period":31,
+ 			 "unit_rate":0.214, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			{"fuel":"electricity","direction":"export",
+   			 "period_name":"peak", "start_settlement_period":32,"last_settlement_period":37,
+ 			 "unit_rate":0.3436, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			{"fuel":"electricity","direction":"export",
+   			 "period_name":"day-part-2", "start_settlement_period":38,"last_settlement_period":3,
+ 			 "unit_rate":0.214, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+
+ 			{"fuel":"gas","direction":"import",
+   			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
+ 			 "unit_rate":0.1024, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
+ 	],
+ "tariff_standing_charge":[{"fuel":"gas", "cost":0.2684, "frequency":"daily"},
+ 					{"fuel":"electricity", "cost":0.4866, "frequency":"daily"}],
+ "tariff_updated_on":"2023-05-04T00:00:00" 					
+},
+{
+ "tariff_id": 3,
+ "tariff_name":"Intelligent Octopus",
+ "supplier_id": 0,
+ "supplier_name": "Octopus Energy", 
+ "tariff_type":"tou",
+ "tariff_requires_smart_meter":true,
+ "tariff_rates":[
+ 			{"fuel":"electricity","direction":"import",
+ 			"period_name":"off-peak", "start_settlement_period":47,"last_settlement_period":9, 
+ 			 "unit_rate":0.075, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			{"fuel":"electricity","direction":"import",
+   			 "period_name":"peak", "start_settlement_period":10,"last_settlement_period":46,
+ 			 "unit_rate":0.3927, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			 {"fuel":"electricity","direction":"export",
+   			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
+ 			 "unit_rate":0.041, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}, 			 
+ 			{"fuel":"gas","direction":"import",
+   			 "period_name":"seg-all-day", "start_settlement_period":0,"last_settlement_period":47,
+ 			 "unit_rate":0.1024, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
+ 	],
+ "tariff_standing_charge":[{"fuel":"gas", "cost":0.2684, "frequency":"daily"},
+ 					{"fuel":"electricity", "cost":0.4422, "frequency":"daily"}],
+ "tariff_updated_on":"2023-02-03T00:00:00" 					
+}
 ]

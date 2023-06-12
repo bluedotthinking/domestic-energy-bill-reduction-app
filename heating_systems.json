@@ -9,7 +9,9 @@
 	"heating_system_efficiency":1.00,
 	"heating_system_fuel_type":"gas",
 	"heating_system_cost": 2000,
-	"heating_system_currency": "GBP"
+	"heating_system_currency": "GBP",
+	"heating_system_coefficient_of_performance":[]
+	
 },
 {
 	"heating_system_id": 1,
