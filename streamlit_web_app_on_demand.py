@@ -95,7 +95,7 @@ def generate_half_hourly_electricity_baseload(profile_name, annual_electricity_c
 
 
 	baseload_profile_df['electricity_demand_normalised'] = baseload_profile_df['annual_avg_demand_kW'] / baseload_profile_df['annual_avg_demand_kW'].sum()
-	baseload_profile_df[['hour', 'minute']] = baseload_profile_df['Time'].str.split(':', 1, expand=True).astype(int)
+	baseload_profile_df[['hour', 'minute']] = baseload_profile_df['Time'].str.split(pat=':', n=-1, expand=True).astype(int)
 
 	baseload_profile_df['profile_id'] = 0
 	baseload_profile_df['profile_name'] = 'Elexon Class 1'
