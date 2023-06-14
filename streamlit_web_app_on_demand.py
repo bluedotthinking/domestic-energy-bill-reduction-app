@@ -1684,8 +1684,9 @@ if __name__ == '__main__':
 				disabled=False,
 				help = 'Assumes system facing due-south, 35degs slope'				
 				)
-				future_solar_PV_Wp_min, future_solar_PV_Wp_max = st.slider('Future Solar PV size (Wp)', 0, 10000, (0,4000), step=500,
-								help='Defaults to 1 to 4kWp')
+# 				future_solar_PV_Wp_min, future_solar_PV_Wp_max = st.slider('Future Solar PV size (Wp)', 0, 10000, (0,4000), step=500,
+# 								help='Defaults to 1 to 4kWp')
+				future_solar_PV_Wp = st.slider('Future Solar PV size (Wp)',0,10000,4000,step=500, help='Defaults to 4kWp')
 				technology_options.append('Solar PV')								
 			else:
 				solar_pv_option = st.multiselect(
@@ -1700,8 +1701,9 @@ if __name__ == '__main__':
 				future_solar_PV_Wp_min = current_solar_PV_Wp
 				future_solar_PV_Wp_max = current_solar_PV_Wp
 
-			future_solar_pv_power_Wp = np.arange(future_solar_PV_Wp_min, future_solar_PV_Wp_max+solar_pv_increment, solar_pv_increment)								
-			solar_power_df = pd.DataFrame(data={'solar_pv_power_kWp':future_solar_pv_power_Wp})
+# 			future_solar_pv_power_Wp = np.arange(future_solar_PV_Wp_min, future_solar_PV_Wp_max+solar_pv_increment, solar_pv_increment)								
+			future_solar_pv_power_Wp = future_solar_PV_Wp
+			solar_power_df = pd.DataFrame(data={'solar_pv_power_kWp':[0,future_solar_pv_power_Wp]})
 			solar_power_df['solar_pv_power_kWp'] = solar_power_df['solar_pv_power_kWp'] / 1000.
 
 		with tab4:
