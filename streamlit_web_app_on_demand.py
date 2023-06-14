@@ -649,8 +649,8 @@ def calculate_energy_balance(input_df, params):
 def process_scenarios(input_df, scenario_df, scenarios_dict):
 
     t_start = time.time()
-    results_df_list = []
-
+#     results_df_list = []
+    summary_results_df_list = []
 # Threadpool approach
 
 # 
@@ -718,15 +718,53 @@ def process_scenarios(input_df, scenario_df, scenarios_dict):
         results_df['electricity_demand_heatpump_Wh'] = electricity_demand_heatpump_Wh_list
         results_df['solar_pv_generation_Wh'] = solar_pv_generation_Wh_list
 		
-        results_df_list.append(results_df)
+#         results_df_list.append(results_df)
+        
+        agg_cols = ['grid_elec_import_Wh','grid_elec_export_Wh','electricity_import_cost','gas_import_cost','electricity_export_revenue','ev_charging_demand_Wh','electricity_demand_heatpump_Wh','solar_pv_generation_Wh','baseload_demand_Wh']
+		
+        summary_results_df = results_df.groupby('scenario_id')[agg_cols].sum().reset_index()
+        summary_results_df_list.append(summary_results_df)
+
+        
     print ('Time to run loop:',time.time() - t_start,'seconds')
-    full_results_df = pd.concat(results_df_list)
-    full_results_df['time_of_day'] = full_results_df['datetime'].dt.strftime('%H:%M')
+    summary_results_df = pd.concat(summary_results_df_list)    
+#     full_results_df = pd.concat(results_df_list)
+#     full_results_df['time_of_day'] = full_results_df['datetime'].dt.strftime('%H:%M')
 
-    print ('full_results_df Mem Usage:',full_results_df.memory_usage().sum()/1e6,'MB')
+#     print ('full_results_df Mem Usage:',full_results_df.memory_usage().sum()/1e6,'MB')
     
-    return full_results_df
+#     return full_results_df
+    return summary_results_df
 
+def evaluate_scenario(input_df, scenarios_dict, target_scenario_id):
+
+    grid_elec_import_Wh_list, grid_elec_export_Wh_list, battery_generation_Wh_list, battery_charging_demand_Wh_list, battery_energy_stored_energy_Wh_beginning_of_period_list, battery_energy_stored_energy_Wh_end_of_period_list, pv_satisfy_battery_demand_Wh_list, electricity_unit_rate_per_kWh_list, electricity_export_unit_rate_per_kWh_list, gas_unit_rate_per_kWh_list, modelled_gas_demand_list, ev_charging_demand_Wh_list, electricity_demand_heatpump_Wh_list, solar_pv_generation_Wh_list = calculate_energy_balance(input_df, scenarios_dict)
+		
+    results_df = pd.DataFrame(data={'datetime':df['datetime'].values})
+    results_df['baseload_demand_Wh'] = input_df['electricity_demand_modelled_Wh'].values
+    results_df['hh_period'] = input_df['hh_period'].values
+    results_df['scenario_id'] = target_scenario_id
+    results_df['grid_elec_import_Wh'] = grid_elec_import_Wh_list
+    results_df['grid_elec_export_Wh'] = grid_elec_export_Wh_list
+    results_df['battery_generation_Wh'] = battery_generation_Wh_list
+    results_df['battery_charging_demand_Wh'] = battery_charging_demand_Wh_list
+    results_df['battery_energy_stored_energy_Wh_beginning_of_period'] = battery_energy_stored_energy_Wh_beginning_of_period_list
+    results_df['battery_energy_stored_energy_Wh_end_of_period'] = battery_energy_stored_energy_Wh_end_of_period_list
+    results_df['pv_satisfy_battery_demand_Wh'] = pv_satisfy_battery_demand_Wh_list
+    results_df['modelled_gas_demand_Wh'] = modelled_gas_demand_list
+    results_df['electricity_import_unit_rate_per_kWh'] = electricity_unit_rate_per_kWh_list
+    results_df['gas_unit_rate_per_kWh'] = gas_unit_rate_per_kWh_list
+    results_df['electricity_export_unit_rate_per_kWh'] = electricity_export_unit_rate_per_kWh_list
+    results_df['electricity_import_cost'] = results_df['grid_elec_import_Wh']*results_df['electricity_import_unit_rate_per_kWh']/1000.
+    results_df['gas_import_cost'] = results_df['modelled_gas_demand_Wh']*results_df['gas_unit_rate_per_kWh']/1000.
+    results_df['electricity_export_revenue'] = results_df['grid_elec_export_Wh']*results_df['electricity_export_unit_rate_per_kWh']/1000.    
+    results_df['ev_charging_demand_Wh'] = ev_charging_demand_Wh_list
+    results_df['electricity_demand_heatpump_Wh'] = electricity_demand_heatpump_Wh_list
+    results_df['solar_pv_generation_Wh'] = solar_pv_generation_Wh_list
+
+    results_df['time_of_day'] = results_df['datetime'].dt.strftime('%H:%M')
+
+    return results_df
 
 def generate_detailed_analysis(current_scenario_id, future_scenario_id):
 
@@ -1243,26 +1281,53 @@ def generate_detailed_analysis(current_scenario_id, future_scenario_id):
 
 	st.markdown("""---""")		
 
-	st.subheader('Demand & Generation Profile - Typical Day')
-
 	display_scenario_type = st.selectbox('Scenario to Display', options=['Future','Current'])
+	
+	st.subheader('Demand & Generation Profile - Typical Day')
 	
 	if display_scenario_type == 'Current':
 		selected_scenario_id = current_scenario_id
 
 	if display_scenario_type == 'Future':
 		selected_scenario_id = future_scenario_id	
+
+
+	
+	
+	typical_demand_profile_df = evaluate_scenario(df, scenarios_dict[selected_scenario_id], selected_scenario_id).groupby(['time_of_day']).agg({'grid_elec_import_Wh':'mean', 
+																																'electricity_import_unit_rate_per_kWh':'mean',
+																																'electricity_export_unit_rate_per_kWh':'mean',
+																																'battery_charging_demand_Wh':'mean',
+																																'battery_generation_Wh':'mean', 
+																																'solar_pv_generation_Wh':'mean',
+																																'baseload_demand_Wh':'mean',
+																																'ev_charging_demand_Wh':'mean',
+																																'electricity_demand_heatpump_Wh':'mean',
+																																'grid_elec_export_Wh':'mean',}).reset_index()
+	
+	
+# 	st.session_state.full_results_df.loc[st.session_state.full_results_df['scenario_id']==selected_scenario_id].groupby(['time_of_day']).agg({'grid_elec_import_Wh':'mean', 
+# 																																										'electricity_import_unit_rate_per_kWh':'mean',
+# 																																										'electricity_export_unit_rate_per_kWh':'mean',
+# 																																										'battery_charging_demand_Wh':'mean',
+# 																																										'battery_generation_Wh':'mean', 
+# 																																										'solar_pv_generation_Wh':'mean',
+# 																																										'baseload_demand_Wh':'mean',
+# 																																										'ev_charging_demand_Wh':'mean',
+# 																																										'electricity_demand_heatpump_Wh':'mean',
+# 																																										'grid_elec_export_Wh':'mean',}).reset_index()
+	
 		
-	typical_demand_profile_df = st.session_state.full_results_df.loc[st.session_state.full_results_df['scenario_id']==selected_scenario_id].groupby(['time_of_day']).agg({'grid_elec_import_Wh':'mean', 
-																																										'electricity_import_unit_rate_per_kWh':'mean',
-																																										'electricity_export_unit_rate_per_kWh':'mean',
-																																										'battery_charging_demand_Wh':'mean',
-																																										'battery_generation_Wh':'mean', 
-																																										'solar_pv_generation_Wh':'mean',
-																																										'baseload_demand_Wh':'mean',
-																																										'ev_charging_demand_Wh':'mean',
-																																										'electricity_demand_heatpump_Wh':'mean',
-																																										'grid_elec_export_Wh':'mean',}).reset_index()
+# 	typical_demand_profile_df = st.session_state.full_results_df.loc[st.session_state.full_results_df['scenario_id']==selected_scenario_id].groupby(['time_of_day']).agg({'grid_elec_import_Wh':'mean', 
+# 																																										'electricity_import_unit_rate_per_kWh':'mean',
+# 																																										'electricity_export_unit_rate_per_kWh':'mean',
+# 																																										'battery_charging_demand_Wh':'mean',
+# 																																										'battery_generation_Wh':'mean', 
+# 																																										'solar_pv_generation_Wh':'mean',
+# 																																										'baseload_demand_Wh':'mean',
+# 																																										'ev_charging_demand_Wh':'mean',
+# 																																										'electricity_demand_heatpump_Wh':'mean',
+# 																																										'grid_elec_export_Wh':'mean',}).reset_index()
 
 	typical_demand_profile_df['household_total_demand'] = (typical_demand_profile_df['baseload_demand_Wh'] + 
 																 typical_demand_profile_df['electricity_demand_heatpump_Wh'] + 
@@ -1814,11 +1879,11 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 		st.session_state.results_present = False
 
 	with col2:
-# 		st.write('')
-# 		st.write('')
 		if st.button('Update Results', type='primary'):
 			with st.spinner(text='Running '+str(len(scenario_df))+' scenarios - this may take a few minutes...'):
-				st.session_state.full_results_df = process_scenarios(df, scenario_df, scenarios_dict)
+# 				st.session_state.full_results_df = process_scenarios(df, scenario_df, scenarios_dict)
+# 				st.session_state.results_present = True
+				st.session_state.summary_results_df = process_scenarios(df, scenario_df, scenarios_dict)
 				st.session_state.results_present = True
 
 	if not st.session_state.results_present:
@@ -1827,10 +1892,11 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 	
 	else:
 
-		agg_cols = ['grid_elec_import_Wh','grid_elec_export_Wh','electricity_import_cost','gas_import_cost','electricity_export_revenue','ev_charging_demand_Wh','electricity_demand_heatpump_Wh','solar_pv_generation_Wh','baseload_demand_Wh']
-	
-		summary_results_df = st.session_state.full_results_df.groupby('scenario_id')[agg_cols].sum().reset_index()
-
+# 		agg_cols = ['grid_elec_import_Wh','grid_elec_export_Wh','electricity_import_cost','gas_import_cost','electricity_export_revenue','ev_charging_demand_Wh','electricity_demand_heatpump_Wh','solar_pv_generation_Wh','baseload_demand_Wh']
+# 	
+# 		summary_results_df = st.session_state.full_results_df.groupby('scenario_id')[agg_cols].sum().reset_index()
+		summary_results_df = st.session_state.summary_results_df
+		
 		summary_results_df = pd.merge(summary_results_df, scenario_df, on='scenario_id')
 	
 		summary_results_df['solar_pv_generation_exported_Wh'] = (summary_results_df['solar_pv_generation_Wh'] - 
@@ -1917,7 +1983,6 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 
 		summary_results_df['Vehicle'] = ''
 		summary_results_df.loc[summary_results_df['vehicle_name']!=current_vehicle,'Vehicle'] = '✓'
-
 		current_elec_standing_charge = summary_results_df.loc[current_cond]['electricity_standing_charge_annual'].values[0]
 		current_elec_cost = summary_results_df.loc[current_cond]['electricity_import_cost'].values[0] - summary_results_df.loc[current_cond]['electricity_export_revenue'].values[0] + summary_results_df.loc[current_cond]['electricity_standing_charge_annual'].values[0]
 		current_gas_cost = summary_results_df.loc[current_cond]['gas_import_cost'].values[0] + summary_results_df.loc[current_cond]['gas_standing_charge_annual'].values[0]
@@ -1957,8 +2022,6 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 
 		current_scenario_idx = summary_results_df.loc[current_cond]['scenario_id'].values[0]
 		
-# 		print (current_scenario_idx)
-
 		current_scenario_investment = summary_results_df.loc[current_cond]['total_system_cost'].values[0]
 											
 		summary_results_df['Upgrade Cost'] = (summary_results_df['total_system_cost']-
@@ -1981,9 +2044,6 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 		summary_results_df['Payback (Years)'] = np.ceil(summary_results_df['Upgrade Cost'] / summary_results_df['Annual Savings'])
 
 
-
-		# current_technology_cost
-
 		future_potential_cond = (
 				(summary_results_df['heating_system_name'].isin(future_heating_system)) &
 				(summary_results_df['vehicle_name'].isin(future_vehicle))&
@@ -1995,24 +2055,15 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 				)
 
 
-
-	# 	summary_results_df
-
 		largest_annual_savings_idx = summary_results_df.loc[future_potential_cond].sort_values(by='Annual Cost',ascending=True)['scenario_id'].values[0]	
 
 		best_return_10_years_idx = summary_results_df.loc[future_potential_cond].sort_values(by='10 Year Return',ascending=False)['scenario_id'].values[0]	
 		best_return_25_years_idx = summary_results_df.loc[future_potential_cond].sort_values(by='25 Year Return',ascending=False)['scenario_id'].values[0]	
 				
-# 		largest_annual_savings_cond =(summary_results_df.loc[future_potential_cond]['scenario_id']==largest_annual_savings_idx)
 
 		largest_annual_savings_cond =(summary_results_df['scenario_id']==largest_annual_savings_idx)
 		best_return_10_years_cond = (summary_results_df['scenario_id']==best_return_10_years_idx)
 		best_return_25_years_cond = (summary_results_df['scenario_id']==best_return_25_years_idx)
-	
-# 		best_return_10_years_idx = summary_results_df.loc[future_potential_cond].loc[best_return_10_years_cond]['scenario_id'].values[0]
-# 		best_return_25_years_idx = summary_results_df.loc[future_potential_cond].loc[best_return_25_years_cond]['scenario_id'].values[0]
-
-	
 
 		n_scenarios = len(summary_results_df.loc[future_potential_cond].index)
 	
@@ -2036,20 +2087,11 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 		if upgrade_option == 'Best 25-Year Return':
 			selected_scenario_id = best_return_25_years_idx
 			selected_scenario_cond = best_return_25_years_cond
-
-# 		print (selected_scenario_id)
-# 		with col2:
-# 			st.write("")
-# 			url1 = 'https://www.facebook.com/groups/2197329430289466/'
-# 			if st.button('FB Discussion Group'):
-# 				webbrowser.open_new_tab(url1)
-		
 	
 		st.write('')
 
 		col1, col2, col3, col4 = st.columns(4,gap='small')
 		with col1:
-# 			st.metric(label="New Annual Bill", value='£'+str(int(summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Annual Cost'].values[0])),
 			st.metric(label="New Annual Bill", value='£'+str(int(summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Annual Cost'].values[0])),			
 					  help="If the bill value is negative - e.g. -£200 - it means you'll make money over the course of a year")
 
@@ -2060,35 +2102,19 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 		
 		with col3:
 
-# 			st.metric(label="Annual Savings", value='£'+str(int(summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Annual Savings'].values[0])))	
 			st.metric(label="Annual Savings", value='£'+str(int(summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Annual Savings'].values[0])))				
-	
-	# 	with col4:
-	# 		st.metric(label="Upgrade Cost", value='£'+str(int(summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Upgrade Cost'].values[0])))
 
-	# 	with col5:
-	# 
-	# # 		if math.ceil(summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Payback (Years)'].values[0]) == 
-	# 		payback_years = summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Payback (Years)'].values[0]
-	# 		if math.isnan(payback_years):
-	# 			payback_years = '-'
-	# 		else:
-	# 			payback_years = int(payback_years)
-	# 		
-	# 		st.metric(label="Payback (Years)", value=payback_years)
 
 	
 		with col4:
-# 			st.metric(label="Upgrades", value=summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['num_upgrades'].values[0])
 			url2 = 'https://octopus.energy/homesolar/'
 			st.write("")
-			if st.button('Find Trusted Installers', type='primary'):
+			if st.button('Find Installers', type='primary'):
 				webbrowser.open_new_tab(url2)			
 
 		
 		with st.expander(label='Details',expanded=False):
 			generate_detailed_analysis(current_scenario_idx, selected_scenario_id)
-# 			generate_detailed_analysis(selected_scenario_id)
 
 		output_csv = convert_df(summary_results_df)
 
@@ -2096,69 +2122,6 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 			label="Download data as CSV",
 			data=output_csv,
 			file_name='summary_results_df.csv',
-			mime='text/csv',
+			mime='text/csv'
 		)
 		
-# 		scenarios_dict[current_scenario_idx]
-# 		scenarios_dict[selected_scenario_id]		
-		
-		
-# 		st.session_state.full_results_df.loc[st.session_state.full_results_df['scenario_id']==current_scenario_idx]
-# 		
-# 		st.session_state.full_results_df.loc[st.session_state.full_results_df['scenario_id']==selected_scenario_id]		
-# 		
-# 		st.session_state.full_results_df.loc[st.session_state.full_results_df['scenario_id']==current_scenario_idx].to_csv('current_time_series.csv')
-# 		st.session_state.full_results_df.loc[st.session_state.full_results_df['scenario_id']==selected_scenario_id].to_csv('future_time_series.csv')		
-		
-# 		with st.form(key='my_form'):
-# 			text_input = st.text_input(label='Enter some text')
-# 			submit_button = st.form_submit_button(label='Submit')
-	# 	Download all scenarios
-
-	# selected = grid_response['selected_rows']
-	# 	If this is the first pass, and the user hasn't made a selection yet, we'll default 
-	# 	to the top row in the chart
-
-	# 	If there isn't a scenario that fits the user's preferences, then something else is wrong!
-
-
-
-
-	# Commented out....
-	# 	with st.expander("Select Your Upgrade Scenario"):
-	# 
-	# # 		display_cols = ['Annual Savings','Investment','Products','scenario_id']
-	# 		display_cols = ['Annual Savings','Heating','Battery','Solar PV','Tariff','Vehicle','scenario_id']	
-	# # 		'EV Charger',
-	# 		gb = GridOptionsBuilder.from_dataframe(summary_results_df.loc[future_potential_cond][display_cols])	
-	# 		gb.configure_selection('single', pre_selected_rows=[0], use_checkbox=True)	
-	# 		# 	gb.configure_selection('single', use_checkbox=True)		
-	# 
-	# 		grid_response = AgGrid(
-	# 			summary_results_df.loc[future_potential_cond][display_cols],
-	# 			editable=False,
-	# 			gridOptions=gb.build(),
-	# 			data_return_mode="filtered_and_sorted",
-	# 			update_mode="selection_changed",	
-	# 		# 	fit_columns_on_grid_load=True,
-	# 			fit_columns_on_grid_load=False,
-	# 			height=200,
-	# 			theme='streamlit',
-	# 		# 	wrapText=True,
-	# 			wrapText=False,		
-	# 		# 		checkboxSelection=True,
-	# 		# 		autoHeight=True
-	# 		)
-	# 		df = grid_response['data']
-	# 		selected = grid_response['selected_rows']
-	# 		
-	# 	if len(selected) == 0:
-	# 		selected_scenario_id = df['scenario_id'].values[0]
-	# 	# 	If the user has clicked on a different row, we should use the scenario_id from that row
-	# 	else:
-	# 		selected_df = pd.DataFrame(selected).apply(pd.to_numeric, errors='coerce')	
-	# 		selected_scenario_id = selected[0]['scenario_id']
-	
-	
-	# End commented out....	
-
