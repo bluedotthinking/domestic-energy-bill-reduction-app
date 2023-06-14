@@ -138,7 +138,6 @@ def generate_half_hourly_electricity_baseload(profile_name, annual_electricity_c
 
 	return half_hourly_df
 
-@st.cache_data
 def get_hourly_PVGIS_file(f_name):
 
 	with open(f_name) as json_file:
@@ -210,10 +209,6 @@ def calculate_heat_demand(df, user_gas_demand_kWh):
 def calculate_EV_charging_behaviour(rates_df_pivoted, annual_miles_driven, 
 									ev_Wh_per_mile, ev_max_power_W, arrival_departure_delta_n_hh_periods):
 									
-	# EV &Driving Attributes
-# 	ev_Wh_per_mile = 250.  # This should be read in as part of the data
-# 	ev_max_power_W = 7000. # This should be read in as part of the data
-
 	ev_demand_dict_list = []
 	ev_Wh_annual_demand = annual_miles_driven*ev_Wh_per_mile
 	ev_Wh_daily_demand = ev_Wh_annual_demand / 365.
@@ -1532,7 +1527,6 @@ def generate_detailed_analysis(current_scenario_id, future_scenario_id):
 # 			st.write('£',future_elec_effective_cost_per_kWh,'/kWh electricity')
 # 			
 
-@st.cache_data
 def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
