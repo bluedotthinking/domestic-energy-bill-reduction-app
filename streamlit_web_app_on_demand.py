@@ -451,7 +451,15 @@ def create_scenarios(vehicles_df, battery_storage_systems_df, battery_units_df,
 				 ((scenario_df['solar_pv_name'] != 'No Solar PV') & (scenario_df['solar_pv_power_kWp']==0.)) )
 
 	scenario_df.drop(scenario_df[drop_cond].index, inplace=True)
+	
+# 	Set all combinations  with no battery storage to battery_num_units and de-duplicate
 
+	no_battery_cond = (scenario_df['battery_storage_name'] == 'No Battery Storage')
+	
+	scenario_df.loc[no_battery_cond, 'battery_num_units'] = 0
+	
+# 	scenario_df = scenario_df.drop_duplicates()
+	
 	drop_cond = ((scenario_df['battery_storage_name'] == 'No Battery Storage') & (scenario_df['battery_num_units'] > 1))
 
 	scenario_df.drop(scenario_df[drop_cond].index, inplace=True)
@@ -1632,7 +1640,6 @@ if __name__ == '__main__':
 			battery_change = st.checkbox('Consider Battery Install/Upgrade?', value=True)
 			st.markdown("""---""")
 			if battery_change:
-# 			if 'Battery' in technology_options:
 				future_battery_num_units = current_battery_num_units
 				battery_storage_option = st.multiselect(
 				'Future',
@@ -1640,9 +1647,10 @@ if __name__ == '__main__':
 				battery_storage_systems_df['battery_storage_name'].unique(),
 				disabled=False
 				)
-				battery_min_number_units, battery_max_number_units = st.slider('Number of Battery Units', 1, 5, (1,2), step=1,
-								help='Defaults to 1 to 3 units')	
+# 				battery_min_number_units, battery_max_number_units = st.slider('Number of Battery Units', 1, 5, (1,2), step=1,
+# 								help='Defaults to 1 to 3 units')	
 				technology_options.append('Battery')
+				battery_number_units = st.slider('Number of Battery Units', 1, 6, 1, step=1, help='Defaults to 1 unit')
 			else:
 				battery_storage_option = st.multiselect(
 				'Future',
@@ -1651,11 +1659,12 @@ if __name__ == '__main__':
 				disabled=True,
 				help='Technology not selected for upgrade by user'
 				 )
-				battery_min_number_units, battery_max_number_units = st.slider('Number of Battery Units', 0, 5, 
-										(current_battery_num_units,current_battery_num_units), step=1,
-								help='Defaults to 1 to 3 units',
-								disabled=True,)			 
-
+# 				battery_min_number_units, battery_max_number_units = st.slider('Number of Battery Units', 0, 5, 
+# 										(current_battery_num_units,current_battery_num_units), step=1,
+# 								help='Defaults to 1 to 3 units',
+# 								disabled=True,)			 
+				battery_number_units = st.slider('Number of Battery Units', 0, 6, step=1, help='Defaults to 1 unit',
+												disabled=True)
 
 		with tab3:
 			solar_pv_min_W = 0
@@ -1861,8 +1870,8 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 	ev_Wh_per_mile=250.
 	ev_max_power_W = 7000.
 
-	battery_number_units = np.arange(battery_min_number_units, battery_max_number_units+1, 1)    
-	battery_units_df = pd.DataFrame(data={'battery_num_units':battery_number_units})
+# 	battery_number_units = np.arange(battery_min_number_units, battery_max_number_units+1, 1)    
+	battery_units_df = pd.DataFrame(data={'battery_num_units':[battery_number_units]})
 
 	ev_demand_dict_list = calculate_EV_charging_behaviour(rates_df_pivoted, annual_miles_driven, ev_Wh_per_mile, ev_max_power_W, arrival_departure_delta_n_hh_periods)
 
@@ -1946,7 +1955,18 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 
 
 		summary_results_df.sort_values(by='Annual Cost', ascending=True, inplace=True)
-
+		
+		current_heating_system
+		print (summary_results_df['heating_system_name'].unique())
+		current_vehicle
+		print (summary_results_df['vehicle_name'].unique())
+		current_battery_storage_system
+		print (summary_results_df['battery_storage_name'].unique())
+		current_solar_pv_system
+		print (summary_results_df['solar_pv_name'].unique()	)
+		current_energy_tariff
+		print (summary_results_df['tariff_name'].unique())
+		
 		current_cond = (
 				(summary_results_df['heating_system_name']==current_heating_system) &
 				(summary_results_df['vehicle_name'] == current_vehicle)&

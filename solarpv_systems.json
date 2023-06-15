@@ -12,7 +12,7 @@
 	"solar_pv_id": 1,
 	"objectType": "solarPV",
 	"country": "UK", 
-	"solar_pv_name": "Rooftop SolarPV", 
+	"solar_pv_name": "Rooftop Solar PV", 
 	"solar_pv_conversion_efficiency": 0.20,
 	"solar_pv_cost_per_kWp": 1500.00,
 	"solar_pv_currency": "GBP"
