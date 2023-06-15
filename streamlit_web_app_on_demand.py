@@ -1640,7 +1640,7 @@ if __name__ == '__main__':
 				battery_storage_systems_df['battery_storage_name'].unique(),
 				disabled=False
 				)
-				battery_min_number_units, battery_max_number_units = st.slider('Number of Battery Units', 1, 5, (1,3), step=1,
+				battery_min_number_units, battery_max_number_units = st.slider('Number of Battery Units', 1, 5, (1,2), step=1,
 								help='Defaults to 1 to 3 units')	
 				technology_options.append('Battery')
 			else:

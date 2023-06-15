@@ -20,5 +20,17 @@
 	"battery_storage_charging_efficiency": 0.95,
 	"battery_storage_unit_cost": 9400,
 	"battery_storage_currency": "GBP"
+},
+{
+    "battery_storage_id": 2,
+	"objectType": "batteryStorage",
+	"country": "UK", 	
+	"battery_storage_name": "Huawei Luna 5kWh",
+	"battery_storage_max_discharge_rate_watts": 2500,
+	"battery_storage_max_charge_rate_watts": 2500,
+	"battery_storage_capacity_Wh": 5000,
+	"battery_storage_charging_efficiency": 0.95,
+	"battery_storage_unit_cost": 3400,
+	"battery_storage_currency": "GBP"
 }
 ]
