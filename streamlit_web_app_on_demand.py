@@ -1956,17 +1956,6 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 
 		summary_results_df.sort_values(by='Annual Cost', ascending=True, inplace=True)
 		
-		current_heating_system
-		print (summary_results_df['heating_system_name'].unique())
-		current_vehicle
-		print (summary_results_df['vehicle_name'].unique())
-		current_battery_storage_system
-		print (summary_results_df['battery_storage_name'].unique())
-		current_solar_pv_system
-		print (summary_results_df['solar_pv_name'].unique()	)
-		current_energy_tariff
-		print (summary_results_df['tariff_name'].unique())
-		
 		current_cond = (
 				(summary_results_df['heating_system_name']==current_heating_system) &
 				(summary_results_df['vehicle_name'] == current_vehicle)&
