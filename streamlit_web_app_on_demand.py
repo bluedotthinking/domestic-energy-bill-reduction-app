@@ -1592,7 +1592,7 @@ if __name__ == '__main__':
 # 		)
 
 	technology_options = []
-
+	st.sidebar.subheader('CutMyEnergyBill - Domestic Energy Bill Reduction App (DEBRA)')
 	with st.sidebar.expander("Upgrade Options", expanded=True):
 
 		tab1, tab2, tab3, tab4, tab5 = st.tabs(["Heating", "Battery","Solar PV","Tariff","Vehicle"])
@@ -2122,9 +2122,8 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 			generate_detailed_analysis(current_scenario_idx, selected_scenario_id)
 
 		output_csv = convert_df(summary_results_df)
-
 		st.download_button(
-			label="Download data as CSV",
+			label="Download Summary of All Scenarios (CSV)",
 			data=output_csv,
 			file_name='summary_results_df.csv',
 			mime='text/csv'
