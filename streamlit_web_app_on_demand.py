@@ -964,6 +964,7 @@ def generate_detailed_analysis(current_scenario_id, future_scenario_id):
 			st.metric(label="Payback", value='N/A')
 		else:
 			st.metric(label="Payback", value=str(payback_years)+' years')	
+		st.metric(label="Net Return over 25 Years", value='£'+str(int(round((cost_savings*25.)-total_investment_cost,0))))
 
 
 	st.markdown("""---""")	
@@ -1577,19 +1578,11 @@ if __name__ == '__main__':
 
 	with col4:
 		budget = st.number_input('Budget (£)', 
-								min_value=0, max_value=50000, value=30000, step=1)
+								min_value=0, max_value=50000, value=50000, step=1)
 
 	with col5:
 		payback_years = st.number_input('Max Payback (Years)', 
-								min_value=1, max_value=50, value=20, step=1)
-
-
-# 	with col1:
-# 		technology_options = st.multiselect(
-# 		'Technologies to Upgrade',
-# 		['Heating', 'Battery', 'Solar PV', 'Tariff', 'Vehicle'],
-# 		['Heating', 'Battery', 'Solar PV', 'Tariff', 'Vehicle'] 
-# 		)
+								min_value=1, max_value=50, value=25, step=1)
 
 	technology_options = []
 	st.sidebar.subheader('CutMyEnergyBill - Domestic Energy Bill Reduction App (DEBRA)')
@@ -1598,11 +1591,6 @@ if __name__ == '__main__':
 		tab1, tab2, tab3, tab4, tab5 = st.tabs(["Heating", "Battery","Solar PV","Tariff","Vehicle"])
 	
 		with tab1:
-	# 	preference_option = st.selectbox(
-	# 		'Technology',
-	# 		['Heating', 'Battery', 'Solar PV', 'Tariff', 'Vehicle'])
-
-	# 	if preference_option == 'Heating':
 			current_heating_system = st.selectbox('Current',
 					heating_systems_df['heating_system_name'].unique()
 					)			
@@ -2073,10 +2061,9 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 		n_scenarios = len(summary_results_df.loc[future_potential_cond].index)
 	
 		st.write('***')
-# 		col1, col2 = st.columns([3,1],gap='small')
-# 		with col1:
+
 		upgrade_option = st.radio(
-		label='Popular Upgrade Options',
+		label='Popular Options',
 		options=["Lowest Annual Bill", "Best 10-Year Return", "Best 25-Year Return"],
 		horizontal=True
 		)
@@ -2102,7 +2089,6 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 
 		with col2:
 
-# 			st.metric(label="Old Annual Bill", value='£'+str(int(summary_results_df.loc[current_cond]['Annual Cost'].values[0])))
 			st.metric(label="Old Annual Bill", value='£'+str(int(summary_results_df.loc[current_cond]['Annual Cost'].values[0])))			
 		
 		with col3:
