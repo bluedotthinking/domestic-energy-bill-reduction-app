@@ -457,9 +457,7 @@ def create_scenarios(vehicles_df, battery_storage_systems_df, battery_units_df,
 	no_battery_cond = (scenario_df['battery_storage_name'] == 'No Battery Storage')
 	
 	scenario_df.loc[no_battery_cond, 'battery_num_units'] = 0
-	
-# 	scenario_df = scenario_df.drop_duplicates()
-	
+		
 	drop_cond = ((scenario_df['battery_storage_name'] == 'No Battery Storage') & (scenario_df['battery_num_units'] > 1))
 
 	scenario_df.drop(scenario_df[drop_cond].index, inplace=True)
@@ -469,22 +467,24 @@ def create_scenarios(vehicles_df, battery_storage_systems_df, battery_units_df,
 
 	scenario_df['scenario_id'] = [n for n in range(len(scenario_df.index))]
 
-# 	scenario_df.to_csv('scenarios_df.csv', index=False)
 
 	scenarios_dict = scenario_df.to_dict('records')
+	list_comp = [d['tariff_id'] for d in ev_demand_dict_list]
 	
 	for n in range(len(scenarios_dict)):
-	
+		
 		t_id = scenarios_dict[n]['tariff_id']
-		scenarios_dict[n]['ev_hh_periods_since_monday_home_arrival'] = ev_demand_dict_list[t_id]['periods_since_monday_home_arrival']
-		scenarios_dict[n]['ev_demand_Wh'] = ev_demand_dict_list[t_id]['ev_demand_Wh']    
-		scenarios_dict[n]['rates_hh_period'] = ev_demand_dict_list[t_id]['hh_period']    
-		scenarios_dict[n]['rates_day_of_week'] = ev_demand_dict_list[t_id]['day_of_week']    
-		scenarios_dict[n]['rates_electricity_import_below_median_rate'] = ev_demand_dict_list[t_id]['electricity_import_below_median_rate']    
-		scenarios_dict[n]['rates_electricity_export_above_median_rate'] = ev_demand_dict_list[t_id]['electricity_export_above_median_rate']    		
-		scenarios_dict[n]['rate_electricity_import_unit_rate_per_kWh'] = ev_demand_dict_list[t_id]['electricity_import_unit_rate_per_kWh']    
-		scenarios_dict[n]['rate_electricity_export_unit_rate_per_kWh'] = ev_demand_dict_list[t_id]['electricity_export_unit_rate_per_kWh']				
-		scenarios_dict[n]['rates_gas_unit_rate_per_kWh'] = ev_demand_dict_list[t_id]['gas_unit_rate_per_kWh']
+		idx = list_comp.index(t_id)
+
+		scenarios_dict[n]['ev_hh_periods_since_monday_home_arrival'] = ev_demand_dict_list[idx]['periods_since_monday_home_arrival']
+		scenarios_dict[n]['ev_demand_Wh'] = ev_demand_dict_list[idx]['ev_demand_Wh']    
+		scenarios_dict[n]['rates_hh_period'] = ev_demand_dict_list[idx]['hh_period']    
+		scenarios_dict[n]['rates_day_of_week'] = ev_demand_dict_list[idx]['day_of_week']    
+		scenarios_dict[n]['rates_electricity_import_below_median_rate'] = ev_demand_dict_list[idx]['electricity_import_below_median_rate']    
+		scenarios_dict[n]['rates_electricity_export_above_median_rate'] = ev_demand_dict_list[idx]['electricity_export_above_median_rate']    		
+		scenarios_dict[n]['rate_electricity_import_unit_rate_per_kWh'] = ev_demand_dict_list[idx]['electricity_import_unit_rate_per_kWh']    
+		scenarios_dict[n]['rate_electricity_export_unit_rate_per_kWh'] = ev_demand_dict_list[idx]['electricity_export_unit_rate_per_kWh']				
+		scenarios_dict[n]['rates_gas_unit_rate_per_kWh'] = ev_demand_dict_list[idx]['gas_unit_rate_per_kWh']
 		scenarios_dict[n]['export_limit_kW'] = export_limit_kW
 
 		
@@ -1569,16 +1569,11 @@ if __name__ == '__main__':
 			"Location",
 			location_names)
 		location_idx = location_names.index(location)
-		print (location)
-		print (location_names)
-		print (location_idx)
 		location_selected_f_name = pvgis_files[location_idx]
-		print (pvgis_files)
-		print (location_selected_f_name)
 
 	with col4:
 		budget = st.number_input('Budget (£)', 
-								min_value=0, max_value=50000, value=50000, step=1)
+								min_value=0, max_value=100000, value=100000, step=1)
 
 	with col5:
 		payback_years = st.number_input('Max Payback (Years)', 
@@ -1597,7 +1592,6 @@ if __name__ == '__main__':
 			st.markdown("""---""")
 			heating_change = st.checkbox('Consider Heating Upgrade?', value=True)
 			if heating_change:
-# 			if 'Heating' in technology_options:
 				future_heating_system = st.multiselect('Future',
 				heating_systems_df['heating_system_name'].unique(),
 				heating_systems_df['heating_system_name'].unique(),
@@ -1611,6 +1605,8 @@ if __name__ == '__main__':
 				disabled=True,
 				help='Technology not selected for upgrade by user'
 				)
+			heating_systems_df = heating_systems_df.loc[heating_systems_df['heating_system_name'].isin([current_heating_system]+future_heating_system)]							
+				
 		with tab2:
 			current_battery_storage_system = st.selectbox('Current',
 					 battery_storage_systems_df['battery_storage_name'].unique(),
@@ -1653,7 +1649,8 @@ if __name__ == '__main__':
 # 								disabled=True,)			 
 				battery_number_units = st.slider('Number of Battery Units', 0, 6, step=1, help='Defaults to 1 unit',
 												disabled=True)
-
+			battery_storage_systems_df = battery_storage_systems_df.loc[battery_storage_systems_df['battery_storage_name'].isin([current_battery_storage_system]+battery_storage_option)]			
+			
 		with tab3:
 			solar_pv_min_W = 0
 			solar_pv_max_W = 4000
@@ -1702,6 +1699,7 @@ if __name__ == '__main__':
 			future_solar_pv_power_Wp = future_solar_PV_Wp
 			solar_power_df = pd.DataFrame(data={'solar_pv_power_kWp':[0,future_solar_pv_power_Wp]})
 			solar_power_df['solar_pv_power_kWp'] = solar_power_df['solar_pv_power_kWp'] / 1000.
+			solar_pv_systems_df = solar_pv_systems_df.loc[solar_pv_systems_df['solar_pv_name'].isin([current_solar_pv_system]+solar_pv_option)]			
 
 		with tab4:
 			export_limit_kW = st.number_input('Export Limit (kW)', value=3.68, 
@@ -1730,7 +1728,8 @@ if __name__ == '__main__':
 				disabled=True,
 				help='Technology not selected for upgrade by user'
 				)
-		
+			energy_tariffs_df = energy_tariffs_df.loc[energy_tariffs_df['tariff_name'].isin([current_energy_tariff]+energy_tariff_option)]
+					
 		with tab5:
 			annual_miles_driven = st.number_input('Annual Miles Driven', min_value=0, 
 													max_value=100000, value=10000, step=100,
@@ -1769,6 +1768,7 @@ if __name__ == '__main__':
 				disabled=True,
 				help='Technology not selected for upgrade by user'
 				 )
+			vehicles_df = vehicles_df.loc[vehicles_df['vehicle_name'].isin([current_vehicle]+future_vehicle)]
 
 	col1, col2 = st.columns([4,1],gap='small')
 	with col1:
@@ -1863,11 +1863,11 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 
 	ev_demand_dict_list = calculate_EV_charging_behaviour(rates_df_pivoted, annual_miles_driven, ev_Wh_per_mile, ev_max_power_W, arrival_departure_delta_n_hh_periods)
 
-
+	
 	scenario_df, scenarios_dict = create_scenarios(vehicles_df, battery_storage_systems_df, battery_units_df,
 						 heating_systems_df, solar_pv_systems_df, solar_power_df,
 						 ev_chargers_df, energy_tariffs_df, ev_demand_dict_list, export_limit_kW)
-
+						 
 	if 'results_present' not in st.session_state:
 		st.session_state.results_present = False
 
@@ -1985,7 +1985,6 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 		current_elec_effective_cost_per_kWh = summary_results_df.loc[current_cond]['electricity_import_cost'].values[0]/(summary_results_df.loc[current_cond]['grid_elec_import_Wh'].values[0]*0.001)
 
 
-		# current_baseload_demand_Wh = summary_results_df.loc[current_cond]['electricity_demand_baseload_Wh'].values[0]
 		current_baseload_demand_Wh = annual_electricity_consumption_kWh*1000.
 		current_ev_demand_Wh = summary_results_df.loc[current_cond]['ev_charging_demand_Wh'].values[0]
 		current_heatpump_demand_Wh = summary_results_df.loc[current_cond]['electricity_demand_heatpump_Wh'].values[0]
@@ -2046,8 +2045,7 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 				(summary_results_df['Upgrade Cost']<=budget)&
 				(summary_results_df['Payback (Years)']<=payback_years)
 				)
-
-
+		
 		largest_annual_savings_idx = summary_results_df.loc[future_potential_cond].sort_values(by='Annual Cost',ascending=True)['scenario_id'].values[0]	
 
 		best_return_10_years_idx = summary_results_df.loc[future_potential_cond].sort_values(by='10 Year Return',ascending=False)['scenario_id'].values[0]	
