@@ -27,13 +27,9 @@ def task(v, x, y):
     return v * v
 
 
-# def open_page(url):
-#     open_script= """
-#         <script type="text/javascript">
-#             window.open('%s', '_blank').focus();
-#         </script>
-#     """ % (url)
-#     html(open_script)
+def set_results_require_rerun():
+	st.session_state.results_present = False
+
 
 st.set_page_config(layout="wide")
 
@@ -1309,29 +1305,6 @@ def generate_detailed_analysis(current_scenario_id, future_scenario_id):
 																																'electricity_demand_heatpump_Wh':'mean',
 																																'grid_elec_export_Wh':'mean',}).reset_index()
 	
-	
-# 	st.session_state.full_results_df.loc[st.session_state.full_results_df['scenario_id']==selected_scenario_id].groupby(['time_of_day']).agg({'grid_elec_import_Wh':'mean', 
-# 																																										'electricity_import_unit_rate_per_kWh':'mean',
-# 																																										'electricity_export_unit_rate_per_kWh':'mean',
-# 																																										'battery_charging_demand_Wh':'mean',
-# 																																										'battery_generation_Wh':'mean', 
-# 																																										'solar_pv_generation_Wh':'mean',
-# 																																										'baseload_demand_Wh':'mean',
-# 																																										'ev_charging_demand_Wh':'mean',
-# 																																										'electricity_demand_heatpump_Wh':'mean',
-# 																																										'grid_elec_export_Wh':'mean',}).reset_index()
-	
-		
-# 	typical_demand_profile_df = st.session_state.full_results_df.loc[st.session_state.full_results_df['scenario_id']==selected_scenario_id].groupby(['time_of_day']).agg({'grid_elec_import_Wh':'mean', 
-# 																																										'electricity_import_unit_rate_per_kWh':'mean',
-# 																																										'electricity_export_unit_rate_per_kWh':'mean',
-# 																																										'battery_charging_demand_Wh':'mean',
-# 																																										'battery_generation_Wh':'mean', 
-# 																																										'solar_pv_generation_Wh':'mean',
-# 																																										'baseload_demand_Wh':'mean',
-# 																																										'ev_charging_demand_Wh':'mean',
-# 																																										'electricity_demand_heatpump_Wh':'mean',
-# 																																										'grid_elec_export_Wh':'mean',}).reset_index()
 
 	typical_demand_profile_df['household_total_demand'] = (typical_demand_profile_df['baseload_demand_Wh'] + 
 																 typical_demand_profile_df['electricity_demand_heatpump_Wh'] + 
@@ -1556,18 +1529,21 @@ if __name__ == '__main__':
 	col1, col2, col3, col4, col5 = st.columns(5)
 	with col1:
 		annual_electricity_consumption_kWh = st.number_input('Annual Elec Usage (kWh)', min_value=100, max_value=20000, value=2500, step=1,
-		help='Excluding demand from EV, Heat Pumps, Batteries, Solar PV - Defaults to UK avg')
+		help='Excluding demand from EV, Heat Pumps, Batteries, Solar PV - Defaults to UK avg',
+		on_change=set_results_require_rerun)
 
 	with col2:
 
 		annual_user_gas_demand_kWh = st.number_input('Annual Gas Usage (kWh)', 
 													min_value=0, max_value=50000, value=12000, step=1,
-													help='Defaults to UK avg')
+													help='Defaults to UK avg',
+													on_change=set_results_require_rerun)
 
 	with col3:
 		location = st.selectbox(
 			"Location",
-			location_names)
+			location_names,
+			on_change=set_results_require_rerun)
 		location_idx = location_names.index(location)
 		location_selected_f_name = pvgis_files[location_idx]
 
@@ -1587,15 +1563,17 @@ if __name__ == '__main__':
 	
 		with tab1:
 			current_heating_system = st.selectbox('Current',
-					heating_systems_df['heating_system_name'].unique()
+					heating_systems_df['heating_system_name'].unique(),
+					on_change=set_results_require_rerun
 					)			
 			st.markdown("""---""")
-			heating_change = st.checkbox('Consider Heating Upgrade?', value=True)
+			heating_change = st.checkbox('Consider Heating Upgrade?', value=True, on_change=set_results_require_rerun)
 			if heating_change:
 				future_heating_system = st.multiselect('Future',
 				heating_systems_df['heating_system_name'].unique(),
 				heating_systems_df['heating_system_name'].unique(),
-				disabled=False
+				disabled=False,
+				on_change=set_results_require_rerun
 				)
 				technology_options.append('Heating')
 			else:		
@@ -1610,6 +1588,7 @@ if __name__ == '__main__':
 		with tab2:
 			current_battery_storage_system = st.selectbox('Current',
 					 battery_storage_systems_df['battery_storage_name'].unique(),
+					 on_change=set_results_require_rerun
 					 )
 				 
 			if current_battery_storage_system == 'No Battery Storage':
@@ -1619,9 +1598,11 @@ if __name__ == '__main__':
 				current_battery_num_units = 0	
 			else:
 				current_battery_num_units = st.slider('Current Battery Num Units', 1, 5, 1, step=1,
-											help='Defaults to 1')
+											help='Defaults to 1',
+											on_change=set_results_require_rerun)
 
-			battery_change = st.checkbox('Consider Battery Install/Upgrade?', value=True)
+			battery_change = st.checkbox('Consider Battery Install/Upgrade?', value=True, 
+										 on_change=set_results_require_rerun)
 			st.markdown("""---""")
 			if battery_change:
 				future_battery_num_units = current_battery_num_units
@@ -1659,15 +1640,16 @@ if __name__ == '__main__':
 			current_solar_pv_system = st.selectbox(
 				 'Current',
 				 solar_pv_systems_df['solar_pv_name'].unique(),
-				 help = 'Assumes system facing due-south, 35degs slope'
+				 help = 'Assumes system facing due-south, 35degs slope',
+				 on_change=set_results_require_rerun
 				 )
 
 			if current_solar_pv_system != 'No Solar PV':					
 				current_solar_PV_Wp = st.slider('Current Solar PV size (Wp)', 0, 10000, 4000, step=10,
-									help='Defaults to 4kWp')
+									help='Defaults to 4kWp', on_change=set_results_require_rerun)
 			else:
 				current_solar_PV_Wp = 0
-			solar_pv_change = st.checkbox('Consider Solar PV Install/Upgrade?', value=True)
+			solar_pv_change = st.checkbox('Consider Solar PV Install/Upgrade?', value=True, on_change=set_results_require_rerun)
 			st.markdown("""---""")
 			if solar_pv_change:
 # 			if 'Solar PV' in technology_options:
@@ -1676,12 +1658,14 @@ if __name__ == '__main__':
 				solar_pv_systems_df['solar_pv_name'].unique(),
 				solar_pv_systems_df['solar_pv_name'].unique(),
 				disabled=False,
-				help = 'Assumes system facing due-south, 35degs slope'				
+				help = 'Assumes system facing due-south, 35degs slope',
+				on_change=set_results_require_rerun
 				)
 # 				future_solar_PV_Wp_min, future_solar_PV_Wp_max = st.slider('Future Solar PV size (Wp)', 0, 10000, (0,4000), step=500,
 # 								help='Defaults to 1 to 4kWp')
-				future_solar_PV_Wp = st.slider('Future Solar PV size (Wp)',0,10000,4000,step=500, help='Defaults to 4kWp')
-				technology_options.append('Solar PV')								
+				future_solar_PV_Wp = st.slider('Future Solar PV size (Wp)',0,10000,4000,step=500, help='Defaults to 4kWp',
+												on_change=set_results_require_rerun)
+				technology_options.append('Solar PV')
 			else:
 				solar_pv_option = st.multiselect(
 				'Future',
@@ -1704,12 +1688,15 @@ if __name__ == '__main__':
 		with tab4:
 			export_limit_kW = st.number_input('Export Limit (kW)', value=3.68, 
 											   min_value=3.68, step = 0.01,
-											   help='- DNOs (Distribution Network Operators) typically limit export to 3.68kW (G98).  Can be extended to 50kW with a successful G99 application')
+											   help='- DNOs (Distribution Network Operators) typically limit export to 3.68kW (G98).  Can be extended to 50kW with a successful G99 application',
+											   on_change=set_results_require_rerun)
 			st.markdown("""---""")		
 			current_energy_tariff = st.selectbox('Current',
-					 energy_tariffs_df['tariff_name'].unique()
+					 energy_tariffs_df['tariff_name'].unique(),
+					 on_change=set_results_require_rerun
 					 )
-			tariff_change = st.checkbox('Consider Energy Tariff Change?', value=True)
+			tariff_change = st.checkbox('Consider Energy Tariff Change?', value=True,
+										on_change=set_results_require_rerun)
 			st.markdown("""---""")
 			if tariff_change:
 # 			if 'Tariff' in technology_options:
@@ -1717,7 +1704,8 @@ if __name__ == '__main__':
 				'Future',
 				energy_tariffs_df['tariff_name'].unique(),
 				energy_tariffs_df['tariff_name'].unique(),
-				disabled=False				
+				disabled=False,
+				on_change=set_results_require_rerun
 				)
 				technology_options.append('Tariff')
 			else:
@@ -1733,12 +1721,14 @@ if __name__ == '__main__':
 		with tab5:
 			annual_miles_driven = st.number_input('Annual Miles Driven', min_value=0, 
 													max_value=100000, value=10000, step=100,
-													help='Defaults to UK avg')
+													help='Defaults to UK avg',
+													on_change=set_results_require_rerun)
 		
 		
 			home_departure_time, home_arrival_time = st.slider('Home Departure and Arrival Time', 
 							value=(datetime.time(7, 0), datetime.time(18, 0)),
-							step=datetime.timedelta(minutes=30))
+							step=datetime.timedelta(minutes=30),
+							on_change=set_results_require_rerun)
 	
 			home_departure_hh_period = int((2*home_departure_time.hour)+(home_departure_time.minute/30.))
 			home_arrival_hh_period = int((2*home_arrival_time.hour)+(home_arrival_time.minute/30.))
@@ -1748,7 +1738,7 @@ if __name__ == '__main__':
 			current_vehicle = st.selectbox('Current Car',
 					 vehicles_df['vehicle_name'].unique()
 					 )
-			vehicle_change = st.checkbox('Consider Vehicle Change?', value=True)
+			vehicle_change = st.checkbox('Consider Vehicle Change?', value=True, on_change=set_results_require_rerun)
 			st.markdown("""---""")			
 
 			if vehicle_change:
@@ -1757,7 +1747,8 @@ if __name__ == '__main__':
 				'Future Car',
 				vehicles_df['vehicle_name'].unique(),
 				vehicles_df['vehicle_name'].unique(),
-				disabled=False
+				disabled=False,
+				on_change=set_results_require_rerun
 				)
 				technology_options.append('Vehicle')		
 			else:
@@ -1869,19 +1860,18 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 						 ev_chargers_df, energy_tariffs_df, ev_demand_dict_list, export_limit_kW)
 						 
 	if 'results_present' not in st.session_state:
-		st.session_state.results_present = False
+# 		st.session_state.results_present = False
+		set_results_require_rerun()
 
 	with col2:
 		if st.button('Update Results', type='primary'):
 			with st.spinner(text='Running '+str(len(scenario_df))+' scenarios - this may take a few minutes...'):
-# 				st.session_state.full_results_df = process_scenarios(df, scenario_df, scenarios_dict)
-# 				st.session_state.results_present = True
+
 				st.session_state.summary_results_df = process_scenarios(df, scenario_df, scenarios_dict)
 				st.session_state.results_present = True
 
 	if not st.session_state.results_present:
-
-		st.write('Hit Update Results to Run for the First Time')
+		st.caption('Inputs Updated - Refresh Results with Button Above')
 	
 	else:
 
