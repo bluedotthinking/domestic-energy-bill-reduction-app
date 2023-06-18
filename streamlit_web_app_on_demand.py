@@ -2083,7 +2083,7 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 
 			st.metric(label="Annual Savings", value='£'+str(int(summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Annual Savings'].values[0])))				
 
-
+	
 	
 		with col4:
 			url2 = 'https://octopus.energy/homesolar/'
@@ -2091,6 +2091,8 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 			if st.button('Find Installers', type='primary'):
 				webbrowser.open_new_tab(url2)			
 
+		if summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Annual Savings'].values[0] < 0.:
+			st.caption('No Options Found To Beat Your Existing Setup')
 		
 		with st.expander(label='Details',expanded=False):
 			generate_detailed_analysis(current_scenario_idx, selected_scenario_id)
