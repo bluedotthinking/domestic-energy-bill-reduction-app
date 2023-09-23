@@ -101,16 +101,41 @@
  			 "unit_rate":0.075, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
  			{"fuel":"electricity","direction":"import",
    			 "period_name":"peak", "start_settlement_period":10,"last_settlement_period":46,
- 			 "unit_rate":0.3927, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			 "unit_rate":0.2978, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
  			 {"fuel":"electricity","direction":"export",
    			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
- 			 "unit_rate":0.041, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}, 			 
+ 			 "unit_rate":0.15, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}, 			 
  			{"fuel":"gas","direction":"import",
    			 "period_name":"seg-all-day", "start_settlement_period":0,"last_settlement_period":47,
- 			 "unit_rate":0.1024, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
+ 			 "unit_rate":0.0512, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
  	],
- "tariff_standing_charge":[{"fuel":"gas", "cost":0.2684, "frequency":"daily"},
- 					{"fuel":"electricity", "cost":0.4422, "frequency":"daily"}],
+ "tariff_standing_charge":[{"fuel":"gas", "cost":0.1509, "frequency":"daily"},
+ 					{"fuel":"electricity", "cost":0.4866, "frequency":"daily"}],
  "tariff_updated_on":"2023-02-03T00:00:00" 					
+},
+{
+ "tariff_id": 4,
+ "tariff_name":"Next Drive",
+ "supplier_id": 1,
+ "supplier_name": "E.ON", 
+ "tariff_type":"tou",
+ "tariff_requires_smart_meter":true,
+ "tariff_rates":[
+ 			{"fuel":"electricity","direction":"import",
+ 			"period_name":"off-peak", "start_settlement_period":0,"last_settlement_period":13, 
+ 			 "unit_rate":0.095, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			{"fuel":"electricity","direction":"import",
+   			 "period_name":"peak", "start_settlement_period":14,"last_settlement_period":47,
+ 			 "unit_rate":0.33, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]},
+ 			 {"fuel":"electricity","direction":"export",
+   			 "period_name":"all-day", "start_settlement_period":0,"last_settlement_period":47,
+ 			 "unit_rate":0.165, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}, 			 
+ 			{"fuel":"gas","direction":"import",
+   			 "period_name":"seg-all-day", "start_settlement_period":0,"last_settlement_period":47,
+ 			 "unit_rate":0.0706, "unit":"kWh", "days_of_week":[0,1,2,3,4,5,6]}
+ 	],
+ "tariff_standing_charge":[{"fuel":"gas", "cost":0.2911, "frequency":"daily"},
+ 					{"fuel":"electricity", "cost":0.5031, "frequency":"daily"}],
+ "tariff_updated_on":"2023-09-23T00:00:00" 					
 }
 ]

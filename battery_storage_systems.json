@@ -80,6 +80,17 @@
 	"battery_storage_charging_efficiency": 0.95,
 	"battery_storage_unit_cost": 2910.0,
 	"battery_storage_currency": "GBP"
+},
+{
+    "battery_storage_id": 7,
+	"objectType": "batteryStorage",
+	"country": "UK", 	
+	"battery_storage_name": "GivEnergy All in One 13.5kWh",
+	"battery_storage_max_discharge_rate_watts": 6000,
+	"battery_storage_max_charge_rate_watts": 6000,
+	"battery_storage_capacity_Wh": 13500,
+	"battery_storage_charging_efficiency": 0.95,
+	"battery_storage_unit_cost": 7200,
+	"battery_storage_currency": "GBP"
 }
-
 ]
