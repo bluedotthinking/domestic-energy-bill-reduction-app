@@ -74,8 +74,12 @@ def load_common_inputs():
 	with open('energy_tariffs.json') as json_file:
 		data = json.load(json_file)
 	energy_tariffs_df = pd.DataFrame(data).fillna(0)
+
+	with open('locations.json') as json_file:
+		data = json.load(json_file)
+	locations_df = pd.DataFrame(data).fillna(0)	
 	
-	return vehicles_df, solar_pv_systems_df, heating_systems_df, battery_storage_systems_df, ev_chargers_df, energy_tariffs_df
+	return vehicles_df, solar_pv_systems_df, heating_systems_df, battery_storage_systems_df, ev_chargers_df, energy_tariffs_df, locations_df
 
 
 def generate_half_hourly_electricity_baseload(profile_name, annual_electricity_consumption_kWh, home_arrival_hh_period):
@@ -137,37 +141,11 @@ def generate_half_hourly_electricity_baseload(profile_name, annual_electricity_c
 	return half_hourly_df
 
 @st.cache_data
-def get_hourly_PVGIS_file(f_name):
-
-# 	with open(f_name) as json_file:
-# 	    data = json.load(json_file)
-
-# 	df = pd.DataFrame(data['outputs']['hourly']).fillna(0) 
-# 
-# 	df = pd.DataFrame(data=data['outputs']['hourly'])
-# 	df['datetime'] = pd.to_datetime(df['time'], format='%Y%m%d:%H%M').dt.round('h')
-# 	df.drop(labels=['time','Int','H_sun'], inplace=True, axis=1)
-# 	df.rename(columns={'P':'watts_per_kWp',
-# 					   'G(i)':'global_irrad_Wm-2',
-# 					   'T2m':'temperature_2m_degC'
-# 					   },inplace=True)
-# 
-# 	df['datetime'] = pd.to_datetime(df['datetime'])
-# 	df = df.set_index('datetime')
-# 	df = df.resample('30min').interpolate().reset_index()
-# 	df['day_of_year'] = df['datetime'].dt.dayofyear
-# 	df['hour'] = df['datetime'].dt.hour
-# 	df['minute'] = df['datetime'].dt.minute    
-# 	print ('Solar PV Wh Generated per kWp', df['watts_per_kWp'].sum()*0.5)
-# 
-	latitude = 51.501
-	longitude = -0.143
-	azimuth = 180
-	tilt = 35
-# 	pvgis_output_df = get_pvgis_results(latitude, longitude, azimuth=180, tilt=35).fillna(0)
+def get_hourly_PVGIS_file(latitude, longitude, azimuth, tilt):
 	
 	output = pvlib.iotools.get_pvgis_hourly(latitude, longitude, start=2019, end=2019, 
-								   raddatabase='PVGIS-SARAH2', components=True, surface_tilt=tilt, 
+								   raddatabase='PVGIS-SARAH2', components=True, 
+								   surface_tilt=tilt, 
 								   surface_azimuth=azimuth, outputformat='json', usehorizon=True, 
 								   userhorizon=None, pvcalculation=True, peakpower=1., 
 								   pvtechchoice='crystSi', mountingplace='free', loss=14, 
@@ -1564,7 +1542,7 @@ def convert_df(df):
 
 if __name__ == '__main__':
 
-	vehicles_df, solar_pv_systems_df, heating_systems_df, battery_storage_systems_df, ev_chargers_df, energy_tariffs_df = load_common_inputs()
+	vehicles_df, solar_pv_systems_df, heating_systems_df, battery_storage_systems_df, ev_chargers_df, energy_tariffs_df, locations_df = load_common_inputs()
 	cols = ['heating_system_name','solar_pv_name','battery_storage_name','vehicle_name','ev_charger_name','tariff_name']
 	litres_per_gallon = 4.546
 	
@@ -1574,7 +1552,7 @@ if __name__ == '__main__':
 	pvgis_files = [f for f in listdir(location_path) if isfile(join(location_path, f)) and fnmatch.fnmatch(f, '*.json')]
 	location_names = list([n.split('_')[0] for n in pvgis_files])
 
-	col1, col2, col3 = st.columns(3)
+	col1, col2, col3, col4, col5  = st.columns(5)
 	with col1:
 		annual_electricity_consumption_kWh = st.number_input('Annual Elec Usage (kWh)', min_value=100, max_value=20000, value=2500, step=1,
 		help='Excluding demand from EV, Heat Pumps, Batteries, Solar PV - Defaults to UK avg',
@@ -1588,20 +1566,40 @@ if __name__ == '__main__':
 													on_change=set_results_require_rerun)
 
 	with col3:
-		location = st.selectbox(
+		location_selected = st.selectbox(
 			"Location",
-			location_names,
-			on_change=set_results_require_rerun)
-		location_idx = location_names.index(location)
-		location_selected_f_name = pvgis_files[location_idx]
+			locations_df['location_name'].values,
+			on_change=set_results_require_rerun,
+			index=0)
 
-# 	with col4:
-# 		budget = st.number_input('Budget (£)', 
-# 								min_value=0, max_value=100000, value=100000, step=1)
-# 
-# 	with col5:
-# 		payback_years = st.number_input('Max Payback (Years)', 
-# 								min_value=1, max_value=50, value=25, step=1)
+
+	with col4:
+		if location_selected == 'Custom':
+			latitude = st.number_input('Latitude', value = 51.477928,
+										min_value=-90., max_value=90.,
+										disabled=False, help = 'In Degrees',
+										on_change=set_results_require_rerun)
+		else:
+			latitude = st.number_input('Latitude', value = locations_df.loc[locations_df['location_name']==location_selected, 'latitude'].values[0],
+										min_value=-90., max_value=90.,
+										disabled=True, help = 'In Degrees',
+										on_change=set_results_require_rerun
+										)
+								
+	with col5:
+		if location_selected == 'Custom':
+			longitude = st.number_input('Longitude', value = 0.,
+						min_value=-180., max_value=180.,
+						disabled=False, help = 'In Degrees',
+						on_change=set_results_require_rerun
+						)
+
+		else:
+			longitude = st.number_input('Longitude', value = locations_df.loc[locations_df['location_name']==location_selected, 'longitude'].values[0],
+									min_value=-180., max_value=180.,
+									disabled=True, help = 'In Degrees',
+									on_change=set_results_require_rerun
+									)
 
 	technology_options = []
 	st.sidebar.subheader('CutMyEnergyBill - Domestic Energy Bill Reduction App (DEBRA)')
@@ -1613,7 +1611,7 @@ if __name__ == '__main__':
 			current_heating_system = st.selectbox('Current',
 					heating_systems_df['heating_system_name'].unique(),
 					on_change=set_results_require_rerun
-					)			
+					)
 			st.markdown("""---""")
 # 			heating_change = st.checkbox('Consider Heating Upgrade?', value=True, on_change=set_results_require_rerun)
 # 			if heating_change:
@@ -1674,22 +1672,9 @@ if __name__ == '__main__':
 			
 			if battery_storage_option != current_battery_storage_system:
 				technology_options.append('Battery')
-# 			else:
-# 				battery_storage_option = st.selectbox(
-# 				'Future',
-# 				battery_storage_systems_df['battery_storage_name'].unique(),
-# 				current_battery_storage_system,
-# 				disabled=True,
-# 				help='Technology not selected for upgrade by user'
-# 				 )
-# 				battery_min_number_units, battery_max_number_units = st.slider('Number of Battery Units', 0, 5, 
-# 										(current_battery_num_units,current_battery_num_units), step=1,
-# 								help='Defaults to 1 to 3 units',
-# 								disabled=True,)			 
-# 				battery_number_units = st.slider('Number of Battery Units', 0, 6, step=1, help='Defaults to 1 unit',
-# 												disabled=True)
+
 			battery_storage_systems_df = battery_storage_systems_df.loc[battery_storage_systems_df['battery_storage_name'].isin([current_battery_storage_system]+[battery_storage_option])]			
-			print (battery_storage_systems_df)
+
 		with tab3:
 			solar_pv_min_W = 0
 			solar_pv_max_W = 4000
@@ -1707,10 +1692,7 @@ if __name__ == '__main__':
 									help='Defaults to 4kWp', on_change=set_results_require_rerun)
 			else:
 				current_solar_PV_Wp = 0
-# 			solar_pv_change = st.checkbox('Consider Solar PV Install/Upgrade?', value=True, on_change=set_results_require_rerun)
 			st.markdown("""---""")
-# 			if solar_pv_change:
-# 			if 'Solar PV' in technology_options:
 			solar_pv_option = st.selectbox(
 			label = 'Future',
 			options = solar_pv_systems_df['solar_pv_name'].unique(),
@@ -1719,32 +1701,26 @@ if __name__ == '__main__':
 			help = 'Assumes system facing due-south, 35degs slope',
 			on_change=set_results_require_rerun
 			)
-			if solar_pv_option != 'No Solar PV':							
+			if solar_pv_option != 'No Solar PV':
 				future_solar_PV_Wp = st.slider('Future Solar PV size (Wp)',0,10000,4000,step=500, help='Defaults to 4kWp',
 												on_change=set_results_require_rerun)
 			else:
 				future_solar_PV_Wp = st.slider('Future Solar PV size (Wp)',0,10000,0,step=500, help='Defaults to 0',
 												on_change=set_results_require_rerun,
 												disabled=True)
+
+			if (current_solar_pv_system != 'No Solar PV') | (solar_pv_option != 'No Solar PV'):
+				azimuth = st.number_input("Azimuth", value=180, min_value=0, max_value=359, 
+											on_change=set_results_require_rerun,
+											help='Azimuth of the PV system - 180 is due south, 90 is due east, 270 is due west')
+				tilt = st.number_input("Tilt", value=35, min_value=0, max_value=90, 
+										on_change=set_results_require_rerun,
+										help='Tilt of the PV system - 0 is flat, 90 is perpendicular to roof')
 			
 			if solar_pv_option != current_solar_pv_system:
 				technology_options.append('Solar PV')
 
-# 			else:
-# 				solar_pv_option = st.multiselect(
-# 				'Future',
-# 				solar_pv_systems_df['solar_pv_name'].unique(),
-# 				current_solar_pv_system,
-# 				disabled=True,
-# 				help='Technology not selected for upgrade by user'
-# 				)
-# 			
-# 				future_solar_PV_Wp = current_solar_PV_Wp
-# 				future_solar_PV_Wp_min = current_solar_PV_Wp
-# 				future_solar_PV_Wp_max = current_solar_PV_Wp
-# 			
-# 			solar_pv_option = list([solar_pv_option])
-# 			future_solar_pv_power_Wp = np.arange(future_solar_PV_Wp_min, future_solar_PV_Wp_max+solar_pv_increment, solar_pv_increment)								
+
 			future_solar_pv_power_Wp = future_solar_PV_Wp
 			solar_power_df = pd.DataFrame(data={'solar_pv_power_kWp':[0,future_solar_pv_power_Wp]})
 			solar_power_df['solar_pv_power_kWp'] = solar_power_df['solar_pv_power_kWp'] / 1000.
@@ -1760,11 +1736,9 @@ if __name__ == '__main__':
 					 energy_tariffs_df['tariff_name'].unique(),
 					 on_change=set_results_require_rerun
 					 )
-# 			tariff_change = st.checkbox('Consider Energy Tariff Change?', value=True,
-# 										on_change=set_results_require_rerun)
+
 			st.markdown("""---""")
-# 			if tariff_change:
-# 			if 'Tariff' in technology_options:
+
 			energy_tariff_option = st.selectbox(
 			label = 'Future',
 			options = energy_tariffs_df['tariff_name'].unique(),
@@ -1908,7 +1882,7 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 	# f_name = 'pvgis_inputs/Thames_Timeseries_52.039_-0.755_SA2_1kWp_crystSi_14_35deg_0deg_2019_2019.json'
 
 
-	df = get_hourly_PVGIS_file(location_path+location_selected_f_name)
+	df = get_hourly_PVGIS_file(latitude, longitude, azimuth, tilt)
 # 	df
 	df = calculate_heat_demand(df, annual_user_gas_demand_kWh)
 
@@ -2103,7 +2077,6 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 				(summary_results_df['tariff_name'] == energy_tariff_option)
 				)
 		
-
 		largest_annual_savings_idx = summary_results_df.loc[future_potential_cond].sort_values(by='Annual Cost',ascending=True)['scenario_id'].values[0]	
 
 		best_return_10_years_idx = summary_results_df.loc[future_potential_cond].sort_values(by='10 Year Return',ascending=False)['scenario_id'].values[0]	
@@ -2118,25 +2091,7 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 	
 		st.write('***')
 
-# 		upgrade_option = st.radio(
-# 		label='Popular Options',
-# 		options=["Lowest Annual Bill", "Best 10-Year Return", "Best 25-Year Return"],
-# 		horizontal=True
-# 		)
-# 
-# 		if upgrade_option == 'Lowest Annual Bill':
-# 			selected_scenario_id = largest_annual_savings_idx
-# 			selected_scenario_cond = largest_annual_savings_cond
-# 
-# 		if upgrade_option == 'Best 10-Year Return':
-# 			selected_scenario_id = best_return_10_years_idx
-# 			selected_scenario_cond = best_return_10_years_cond
-# 
-# 		if upgrade_option == 'Best 25-Year Return':
-# 			selected_scenario_id = best_return_25_years_idx
-# 			selected_scenario_cond = best_return_25_years_cond
-# 	
-# 		st.write('')
+
 		selected_scenario_id = largest_annual_savings_idx
 		selected_scenario_cond = largest_annual_savings_cond
 

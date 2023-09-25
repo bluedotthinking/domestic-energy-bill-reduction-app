@@ -1,0 +1,68 @@
+[
+{
+ "location_id": 0,
+ "location_name":"London",
+ "latitude": 51.501,
+ "longitude": -0.143
+ },
+{
+ "location_id": 1,
+ "location_name":"East Midlands",
+ "latitude": 52.905,
+ "longitude": -0.638
+ }, 
+{
+ "location_id": 2,
+ "location_name":"East of England",
+ "latitude": 52.419,
+ "longitude": 0.746
+ }, 
+{
+ "location_id": 3,
+ "location_name":"North East",
+ "latitude": 54.777,
+ "longitude": -1.599
+ }, 
+{
+ "location_id": 4,
+ "location_name":"North West",
+ "latitude": 53.471,
+ "longitude": -2.248
+ }, 
+{
+ "location_id": 5,
+ "location_name":"Scotland",
+ "latitude": 55.930,
+ "longitude": -3.205
+ }, 
+{
+ "location_id": 6,
+ "location_name":"South East",
+ "latitude": 51.131,
+ "longitude": 0.272
+ }, 
+ {
+ "location_id": 7,
+ "location_name":"South West",
+ "latitude": 50.721,
+ "longitude": -3.523
+ },
+ {
+ "location_id": 8,
+ "location_name":"Wales",
+ "latitude": 51.527,
+ "longitude": -3.250
+ },      
+ {
+ "location_id": 9,
+ "location_name":"West Midlands",
+ "latitude": 52.475,
+ "longitude": -1.899
+ },
+  {
+ "location_id": 10,
+ "location_name":"Custom",
+ "latitude": 51.501,
+ "longitude": -0.143
+ }
+ ]
