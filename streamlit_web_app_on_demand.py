@@ -1615,13 +1615,7 @@ if __name__ == '__main__':
 			)
 			if future_heating_system != current_heating_system:
 				technology_options.append('Heating')
-# 			else:		
-# 				future_heating_system = st.selectbox(label='Future',
-# 				options=heating_systems_df['heating_system_name'].unique(),
-# 				index=0,
-# 				disabled=True,
-# 				help='Technology not selected for upgrade by user'
-# 				)
+
 			heating_systems_df = heating_systems_df.loc[heating_systems_df['heating_system_name'].isin([current_heating_system]+[future_heating_system])]							
 				
 		with tab2:
@@ -1640,18 +1634,16 @@ if __name__ == '__main__':
 											help='Defaults to 1',
 											on_change=set_results_require_rerun)
 
-# 			battery_change = st.checkbox('Consider Battery Install/Upgrade?', value=True, 
-# 										 on_change=set_results_require_rerun)
 			st.markdown("""---""")
-# 			if battery_change:
-# 			future_battery_num_units = current_battery_num_units
+
 			battery_storage_option = st.selectbox(
-			label = 'Future',
-			options = battery_storage_systems_df['battery_storage_name'].unique(),
-			index=1,
-			disabled=False
+				label = 'Future',
+				options = battery_storage_systems_df['battery_storage_name'].unique(),
+				index=1,
+				disabled=False,
+				on_change=set_results_require_rerun
 			)
-# 			battery_number_units = st.slider('Number of Battery Units', 1, 6, 1, step=1, help='Defaults to 1 unit')
+
 			if battery_storage_option != 'No Battery Storage':
 				battery_number_units = st.slider('Number of Battery Units', 1, 6, 1, step=1, help='Defaults to 1 unit')
 			else:
@@ -1685,13 +1677,13 @@ if __name__ == '__main__':
 				current_solar_PV_Wp = 0
 			st.markdown("""---""")
 			solar_pv_option = st.selectbox(
-			label = 'Future',
-			options = solar_pv_systems_df['solar_pv_name'].unique(),
-			index = 1,
-			disabled=False,
-			help = 'Assumes system facing due-south, 35degs slope',
-			on_change=set_results_require_rerun
-			)
+							label = 'Future',
+							options = solar_pv_systems_df['solar_pv_name'].unique(),
+							index = 1,
+							disabled=False,
+							help = 'Assumes system facing due-south, 35degs slope',
+							on_change=set_results_require_rerun
+							)
 			if solar_pv_option != 'No Solar PV':
 				future_solar_PV_Wp = st.slider('Future Solar PV size (Wp)',0,10000,4000,step=500, help='Defaults to 4kWp',
 												on_change=set_results_require_rerun)
@@ -1740,14 +1732,7 @@ if __name__ == '__main__':
 
 			if  energy_tariff_option != current_energy_tariff:
 				technology_options.append('Tariff')
-# 			else:
-# 				energy_tariff_option = st.multiselect(
-# 				'Future',
-# 				energy_tariffs_df['tariff_name'].unique(),
-# 				current_energy_tariff,
-# 				disabled=True,
-# 				help='Technology not selected for upgrade by user'
-# 				)
+
 			energy_tariffs_df = energy_tariffs_df.loc[energy_tariffs_df['tariff_name'].isin([current_energy_tariff]+[energy_tariff_option])]
 					
 		with tab5:
@@ -1768,7 +1753,8 @@ if __name__ == '__main__':
 		
 			vehicle_fuel_cost_per_litre = st.slider('Vehicle Fuel Cost (£/litre)', 1.00, 2.50, 1.60, step=0.01)
 			current_vehicle = st.selectbox('Current Car',
-					 vehicles_df['vehicle_name'].unique()
+					 vehicles_df['vehicle_name'].unique(),
+					 on_change=set_results_require_rerun
 					 )
 # 			vehicle_change = st.checkbox('Consider Vehicle Change?', value=True, on_change=set_results_require_rerun)
 			st.markdown("""---""")			
@@ -1798,18 +1784,7 @@ if __name__ == '__main__':
 	col1, col2 = st.columns([4,1],gap='small')
 	with col1:
 		st.write("Based on your options (see left), you're open to upgrading",', '.join(technology_options))
-	
 
-# with st.sidebar.expander("ℹ️ - Getting Started", expanded=False):
-# 
-#     st.write(
-#         """     
-# The *DEBRA* app is an easy-to-use interface built in Streamlit for UK households to find the most profitable low-carbon upgrades for their properties
-# 1. Use the tick-boxes to select the technologies you're interested in
-# 2. Set your preferences for each technology
-# 3. Pick a scenario that suits your needs (biggest savings selected by default).
-# 		"""
-#     )
 
 	with st.sidebar.expander("How It Works", expanded=False):
 
