@@ -728,23 +728,14 @@ def process_scenarios(input_df, scenario_df, scenarios_dict):
         results_df['ev_charging_demand_Wh'] = ev_charging_demand_Wh_list
         results_df['electricity_demand_heatpump_Wh'] = electricity_demand_heatpump_Wh_list
         results_df['solar_pv_generation_Wh'] = solar_pv_generation_Wh_list
-		
-#         results_df_list.append(results_df)
         
         agg_cols = ['grid_elec_import_Wh','grid_elec_export_Wh','electricity_import_cost','gas_import_cost','electricity_export_revenue','ev_charging_demand_Wh','electricity_demand_heatpump_Wh','solar_pv_generation_Wh','baseload_demand_Wh']
 		
         summary_results_df = results_df.groupby('scenario_id')[agg_cols].sum().reset_index()
         summary_results_df_list.append(summary_results_df)
 
-        
     print ('Time to run loop:',time.time() - t_start,'seconds')
     summary_results_df = pd.concat(summary_results_df_list)    
-#     full_results_df = pd.concat(results_df_list)
-#     full_results_df['time_of_day'] = full_results_df['datetime'].dt.strftime('%H:%M')
-
-#     print ('full_results_df Mem Usage:',full_results_df.memory_usage().sum()/1e6,'MB')
-    
-#     return full_results_df
     return summary_results_df
 
 def evaluate_scenario(input_df, scenarios_dict, target_scenario_id):
@@ -1904,7 +1895,6 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 						 ev_chargers_df, energy_tariffs_df, ev_demand_dict_list, export_limit_kW)
 						 
 	if 'results_present' not in st.session_state:
-# 		st.session_state.results_present = False
 		set_results_require_rerun()
 
 	with col2:
@@ -1919,9 +1909,6 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 	
 	else:
 
-# 		agg_cols = ['grid_elec_import_Wh','grid_elec_export_Wh','electricity_import_cost','gas_import_cost','electricity_export_revenue','ev_charging_demand_Wh','electricity_demand_heatpump_Wh','solar_pv_generation_Wh','baseload_demand_Wh']
-# 	
-# 		summary_results_df = st.session_state.full_results_df.groupby('scenario_id')[agg_cols].sum().reset_index()
 		summary_results_df = st.session_state.summary_results_df
 		
 		summary_results_df = pd.merge(summary_results_df, scenario_df, on='scenario_id')
@@ -2116,18 +2103,17 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 			st.write("")
 			if st.button('Find Installers', type='primary'):
 				webbrowser.open_new_tab(url2)			
-
-# 		if summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Annual Savings'].values[0] < 0.:
-# 			st.caption('No Options Found To Beat Your Existing Setup')
 		
 		with st.expander(label='Details',expanded=False):
 			generate_detailed_analysis(current_scenario_idx, selected_scenario_id)
 
-		output_csv = convert_df(summary_results_df)
-		st.download_button(
-			label="Download Summary of All Scenarios (CSV)",
-			data=output_csv,
-			file_name='summary_results_df.csv',
-			mime='text/csv'
-		)
+
+# 		half_hourly_results_df = evaluate_scenario(df, scenarios_dict[selected_scenario_id], selected_scenario_id)
+# 		output_csv = convert_df(summary_results_df)
+# 		st.download_button(
+# 			label="Download Summary of All Scenarios (CSV)",
+# 			data=output_csv,
+# 			file_name='summary_results_df.csv',
+# 			mime='text/csv'
+# 		)
 		
