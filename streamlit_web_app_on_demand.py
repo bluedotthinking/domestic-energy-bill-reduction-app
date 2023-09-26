@@ -1645,7 +1645,9 @@ if __name__ == '__main__':
 			)
 
 			if battery_storage_option != 'No Battery Storage':
-				battery_number_units = st.slider('Number of Battery Units', 1, 6, 1, step=1, help='Defaults to 1 unit')
+				battery_number_units = st.slider('Number of Battery Units', 1, 6, 1, step=1, 
+													help='Defaults to 1 unit', 
+													on_change=set_results_require_rerun)
 			else:
 				battery_number_units = st.slider('Future Battery Num Units', 0, 5, 0, step=1,
 											help='Set to zero',
@@ -1699,6 +1701,15 @@ if __name__ == '__main__':
 				tilt = st.number_input("Tilt", value=35, min_value=0, max_value=90, 
 										on_change=set_results_require_rerun,
 										help='Tilt of the PV system - 0 is flat, 90 is perpendicular to roof')
+			else:
+				azimuth = st.number_input("Azimuth", value=180, min_value=0, max_value=359, 
+											on_change=set_results_require_rerun,
+											help='Azimuth of the PV system - 180 is due south, 90 is due east, 270 is due west',
+											disabled=True)
+				tilt = st.number_input("Tilt", value=35, min_value=0, max_value=90, 
+										on_change=set_results_require_rerun,
+										help='Tilt of the PV system - 0 is flat, 90 is perpendicular to roof',
+										disabled=True)
 			
 			if solar_pv_option != current_solar_pv_system:
 				technology_options.append('Solar PV')
@@ -2079,8 +2090,8 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 			if st.button('Find Installers', type='primary'):
 				webbrowser.open_new_tab(url2)			
 		
-		with st.expander(label='Details',expanded=False):
-			generate_detailed_analysis(current_scenario_idx, selected_scenario_id)
+# 		with st.expander(label='Details',expanded=False):
+		generate_detailed_analysis(current_scenario_idx, selected_scenario_id)
 
 
 # 		half_hourly_results_df = evaluate_scenario(df, scenarios_dict[selected_scenario_id], selected_scenario_id)
