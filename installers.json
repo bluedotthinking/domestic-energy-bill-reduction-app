@@ -1,0 +1,19 @@
+[
+{
+	"installer_id": 0,
+	"name": "Octopus Energy",
+	"url": "https://octopus.energy/home-tech/",
+	"region": ["London","West Midlands","East Midlands","East of England","North East",
+				"North West","Scotland","South East","South West","Wales"],
+	"products":["Heating","Battery","Solar PV","Tariff","EV Charger","Vehicle"]				
+				
+},
+{
+	"installer_id": 1,
+	"name": "Brimstone Energy",
+	"url": "https://brimstone-energy.uk/",
+	"region": ["London","East Midlands","East of England"],
+	"products":["Battery","Solar PV","EV Charger"]
+	
+}
+]
