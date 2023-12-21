@@ -20,7 +20,7 @@ import fnmatch
 import streamlit_toggle as tog
 import pvlib
 from streamlit_modal import Modal
-import streamlit.components.v1 as components
+# import streamlit.components.v1 as components
 import io
 
 
