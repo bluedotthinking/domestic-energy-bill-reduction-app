@@ -13,7 +13,27 @@
 	"name": "Brimstone Energy",
 	"url": "https://brimstone-energy.uk/",
 	"region": ["London","East Midlands","East of England"],
+	"products":["Battery","Solar PV","EV Charger"]	
+},
+{
+	"installer_id": 2,
+	"name": "The Green Way Solar Ltd",
+	"url": "https://www.thegreenwaysolar.co.uk/",
+	"region": ["London","South East","East of England"],
 	"products":["Battery","Solar PV","EV Charger"]
-	
+},
+{
+	"installer_id": 3,
+	"name": "Power Integration Engineering",
+	"url": "https://www.pieng.co.uk/",
+	"region": ["London","South East","East of England"],
+	"products":["Battery","Solar PV","EV Charger"]
+},
+{
+	"installer_id": 4,
+	"name": "M2 Mechanical",
+	"url": "https://m2mechanical.co.uk/",
+	"region": ["South East"],
+	"products":["Heating","Battery","Solar PV","EV Charger"]
 }
 ]
