@@ -4,7 +4,7 @@ Welcome to DEBRA - Domestic Energy Bill Reduction App
 
 This is a basic readme - to be expanded later!
 
-This repo consists of 3 main parts:
+This repo consists of 2 main parts:
 
 1. Underlying data (.json, .csv files)
 2. Streamlit Application (streamlit_web_app_on_demand.py)
