@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
-from st_aggrid import AgGrid, GridOptionsBuilder
+# from st_aggrid import AgGrid, GridOptionsBuilder
 from streamlit_echarts import st_echarts
 import datetime
 import json
@@ -19,7 +19,7 @@ import webbrowser
 import fnmatch
 import streamlit_toggle as tog
 import pvlib
-from streamlit_modal import Modal
+# from streamlit_modal import Modal
 # import streamlit.components.v1 as components
 import io
 
@@ -2163,7 +2163,8 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 
 		st.write('')
 		st.write('')
-								
+
+# Replace with Streamlit's Experimental modal here....
 
 # 		with col4:
 # # 			st.write("")
@@ -2172,66 +2173,66 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 # 
 # 			st.metric(label=":green[Annual Savings]", value='£'+str(int(summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Annual Savings'].values[0])))				
 
-		modal = Modal(
-			"Installers In Your Region", 
-			key="installers-modal",
+# 		modal = Modal(
+# 			"Installers In Your Region", 
+# 			key="installers-modal",
 
-			# Optional
-			padding=20,    # default value
-			max_width=700  # default value
-		)
+# 			# Optional
+# 			padding=20,    # default value
+# 			max_width=700  # default value
+# 		)
 	
 
-		with col3:
-			st.write("")				
-			open_modal = st.button('Find Installers', type='primary')
+# 		with col3:
+# 			st.write("")				
+# 			open_modal = st.button('Find Installers', type='primary')
 
-		if open_modal:
-			modal.open()
+# 		if open_modal:
+# 			modal.open()
 	
-		if modal.is_open():
-			with modal.container():
+# 		if modal.is_open():
+# 			with modal.container():
 
-				installers_df['Heating System'] = 'x'		
-				cond = installers_df['products'].str.contains('Heating', regex=False)
-				installers_df['Heating System'].loc[cond] = '✓'
+# 				installers_df['Heating System'] = 'x'		
+# 				cond = installers_df['products'].str.contains('Heating', regex=False)
+# 				installers_df['Heating System'].loc[cond] = '✓'
 
-				installers_df['Battery'] = 'x'		
-				cond = installers_df['products'].str.contains('Battery', regex=False)
-				installers_df['Battery'].loc[cond] = '✓'
+# 				installers_df['Battery'] = 'x'		
+# 				cond = installers_df['products'].str.contains('Battery', regex=False)
+# 				installers_df['Battery'].loc[cond] = '✓'
 
-				installers_df['Solar PV'] = 'x'		
-				cond = installers_df['products'].str.contains('Solar PV', regex=False)
-				installers_df['Solar PV'].loc[cond] = '✓'
+# 				installers_df['Solar PV'] = 'x'		
+# 				cond = installers_df['products'].str.contains('Solar PV', regex=False)
+# 				installers_df['Solar PV'].loc[cond] = '✓'
 				
-# 				installers_df['Tariff'] = 'x'		
-# 				heating_cond = installers_df['products'].str.contains('Tariff', regex=False)
-# 				installers_df['Tariff'].loc[heating_cond] = '✓'
+# # 				installers_df['Tariff'] = 'x'		
+# # 				heating_cond = installers_df['products'].str.contains('Tariff', regex=False)
+# # 				installers_df['Tariff'].loc[heating_cond] = '✓'
 
-				installers_df['EV Charger'] = 'x'		
-				cond = installers_df['products'].str.contains('EV Charger', regex=False)
-				installers_df['EV Charger'].loc[cond] = '✓'								
+# 				installers_df['EV Charger'] = 'x'		
+# 				cond = installers_df['products'].str.contains('EV Charger', regex=False)
+# 				installers_df['EV Charger'].loc[cond] = '✓'								
 
 		
-				installers_df.rename(columns={"name":"Installer",
-											  "url":"Link"}, inplace=True)
+# 				installers_df.rename(columns={"name":"Installer",
+# 											  "url":"Link"}, inplace=True)
 				 
-				if location_selected != 'Custom':
-					region_cond = installers_df['region'].str.contains(location_selected, regex=False)
-				else:
-					region_selected = st.selectbox(
-										"Select your region",
-										locations_df['location_name'].values,
-										index=0)
+# 				if location_selected != 'Custom':
+# 					region_cond = installers_df['region'].str.contains(location_selected, regex=False)
+# 				else:
+# 					region_selected = st.selectbox(
+# 										"Select your region",
+# 										locations_df['location_name'].values,
+# 										index=0)
 					
-					region_cond = installers_df['region'].str.contains(region_selected, regex=False)
+# 					region_cond = installers_df['region'].str.contains(region_selected, regex=False)
 					
-				show_cols = ['Installer',"Link","Heating System","Battery","Solar PV","EV Charger"]
-				colour_cols = ["Heating System","Battery","Solar PV","EV Charger"]
-				st.dataframe(installers_df.loc[region_cond][show_cols].style.applymap(color_avail, subset=colour_cols),
-							 column_config={
-							 "Link": st.column_config.LinkColumn("Link")},
-							 use_container_width=True, hide_index=True)
+# 				show_cols = ['Installer',"Link","Heating System","Battery","Solar PV","EV Charger"]
+# 				colour_cols = ["Heating System","Battery","Solar PV","EV Charger"]
+# 				st.dataframe(installers_df.loc[region_cond][show_cols].style.applymap(color_avail, subset=colour_cols),
+# 							 column_config={
+# 							 "Link": st.column_config.LinkColumn("Link")},
+# 							 use_container_width=True, hide_index=True)
 
 		
 		generate_detailed_analysis(current_scenario_idx, selected_scenario_id)
@@ -2240,7 +2241,6 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 
 		current_half_hourly_results_df = evaluate_scenario(df, scenarios_dict[current_scenario_idx], current_scenario_idx)
 		future_half_hourly_results_df = evaluate_scenario(df, scenarios_dict[selected_scenario_id], selected_scenario_id)
-		
 
 		buffer = io.BytesIO()
 
@@ -2251,7 +2251,7 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 			current_half_hourly_results_df.to_excel(writer, sheet_name='Current Half-Hourly')
 
 			# Close the Pandas Excel writer and output the Excel file to the buffer
-			writer.save()
+			# writer.close()
 
 			st.download_button(
 				label="Download Half-Hourly Consumption",
