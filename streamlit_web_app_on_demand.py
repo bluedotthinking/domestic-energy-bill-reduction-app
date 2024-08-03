@@ -2244,54 +2244,37 @@ For all assumptions & details, see our [GitHub Project](https://github.com/cutmy
 
 		buffer = io.BytesIO()
 
-		# Create a Pandas Excel writer using XlsxWriter as the engine.
-		# with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-		# 	# Write each dataframe to a different worksheet.
-		# 	# future_half_hourly_results_df.to_excel(writer, sheet_name='Future Half-Hourly')
-		# 	# current_half_hourly_results_df.to_excel(writer, sheet_name='Current Half-Hourly')
+		# download1 = st.download_button(
+		# 	label="Download CSV (Current)",
+		# 	data=current_half_hourly_results_df.to_csv(index=False).encode('utf-8'),
+		# 	file_name='current_demand_analysis.csv',
+		# 	mime='text/csv'
+		# 	)
 
-		# 	# Close the Pandas Excel writer and output the Excel file to the buffer
-		# 	# writer.close()
-		# 	# writer.save()
-
-		# 	future_half_hourly_results_df.to_excel(writer, sheet_name='Future')
-		# 	current_half_hourly_results_df.to_excel(writer, sheet_name='Current')
-		# 	st.download_button(label="Download Excel Analysis", 
-		# 							data=buffer.getvalue(), 
-		# 							file_name='half_hourly_demand.xlsx', 
-		# 							mime="application/vnd.ms-excel")
+		# download2 = st.download_button(
+		# 	label="Download CSV (Future)",
+		# 	data=future_half_hourly_results_df.to_csv(index=False).encode('utf-8'),
+		# 	file_name='future_demand_analysis.csv',
+		# 	mime='text/csv'
+		# 	)
 
 
-		download1 = st.download_button(
-			label="Download CSV (Current)",
-			data=future_half_hourly_results_df.to_csv(index=False).encode('utf-8'),
-			file_name='current_demand_analysis.csv',
-			mime='text/csv'
-			)
+		df_list = [current_half_hourly_results_df, future_half_hourly_results_df]
+		with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+		    # Write each dataframe to a different worksheet.
 
-		download2 = st.download_button(
-			label="Download CSV (Future)",
-			data=future_half_hourly_results_df.to_csv(index=False).encode('utf-8'),
-			file_name='future_demand_analysis.csv',
-			mime='text/csv'
-			)
+		    current_half_hourly_results_df.to_excel(writer, sheet_name=f'Current Setup', index=False)
+		    future_half_hourly_results_df.to_excel(writer, sheet_name=f'Future Setup', index=False)
 
+		    # Close the Pandas Excel writer and output the Excel file to the buffer
+		    writer.close()
 
-		# with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-    	# # Write each dataframe to a different worksheet.
-		# 	future_half_hourly_results_df.to_excel(writer, sheet_name='Sheet1', index=False)
+		    st.download_button(
+		        label="Download Excel worksheets",
+		        data=buffer,
+		        file_name="cutmyenergybill-export.xlsx",
+		        mime="application/vnd.ms-excel"
+		    )
 
-		# 	download2 = st.download_button(
-		# 		label="Download data as Excel",
-		# 		data=buffer,
-		# 		file_name='large_df.xlsx',
-		# 		mime='application/vnd.ms-excel')
-
-			# st.download_button(
-			# 	label="Download Half-Hourly Consumption",
-			# 	data=buffer,
-			# 	file_name="half_hourly_demand.xlsx",
-			# 	mime="application/vnd.ms-excel"
-			# )		
 
 
