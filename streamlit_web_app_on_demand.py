@@ -22,7 +22,6 @@ import pvlib
 # from streamlit_modal import Modal
 # import streamlit.components.v1 as components
 import io
-import pgeocode
 import requests
 import plotly.graph_objects as go
 
