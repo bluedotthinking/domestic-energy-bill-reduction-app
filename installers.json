@@ -3,8 +3,9 @@
 	"installer_id": 0,
 	"name": "Octopus Energy",
 	"url": "https://octopus.energy/home-tech/",
-	"region": ["London","West Midlands","East Midlands","East of England","North East",
-				"North West","Scotland","South East","South West","Wales"],
+	"region": ["London","West Midlands","East Midlands","East of England","North East England",
+				"North West England","Scotland","South East England","South West England",
+				"Wales","Yorkshire and the Humber","Northern Ireland"],
 	"products":["Heating","Battery","Solar PV","Tariff","EV Charger","Vehicle"]				
 				
 },
@@ -19,21 +20,21 @@
 	"installer_id": 2,
 	"name": "The Green Way Solar Ltd",
 	"url": "https://www.thegreenwaysolar.co.uk/",
-	"region": ["London","South East","East of England"],
+	"region": ["London","South East England","East of England"],
 	"products":["Battery","Solar PV","EV Charger"]
 },
 {
 	"installer_id": 3,
 	"name": "Power Integration Engineering",
 	"url": "https://www.pieng.co.uk/",
-	"region": ["London","South East","East of England"],
+	"region": ["London","South East England","East of England"],
 	"products":["Battery","Solar PV","EV Charger"]
 },
 {
 	"installer_id": 4,
 	"name": "M2 Mechanical",
 	"url": "https://m2mechanical.co.uk/",
-	"region": ["South East"],
+	"region": ["South East England"],
 	"products":["Heating","Battery","Solar PV","EV Charger"]
 }
 ]
