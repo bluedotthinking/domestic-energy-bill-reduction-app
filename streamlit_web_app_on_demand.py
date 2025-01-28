@@ -2497,7 +2497,7 @@ if __name__ == '__main__':
 				# st.metric(label=":green[New Annual Bill]", value='£'+str(int(summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Annual Cost'].values[0])),			
 				# 		  help="If your bill is negative, you'll earn income over the course of a year")
 				# Show investment needed
-				st.metric(label="Upfront Cost", value='£'+str(int(summary_results_df.loc[selected_scenario_cond]['total_system_cost'].values[0]-current_scenario_investment)),			
+				st.metric(label="Upfront Cost", value='£'+str(int(summary_results_df.loc[selected_scenario_cond]['Upgrade Cost'].values[0])),			
 						  help="What it'll cost to upgrade to the new system")
 				
 
@@ -2544,7 +2544,7 @@ if __name__ == '__main__':
 
 				with col2:
 
-					st.metric(label="Upfront Cost", value='£'+str(int(summary_results_df.loc[best_return_25_years_cond]['total_system_cost'].values[0]-current_scenario_investment)),			
+					st.metric(label="Upfront Cost", value='£'+str(int(summary_results_df.loc[best_return_25_years_cond]['Upgrade Cost'].values[0])),			
 							  help="What it'll cost to upgrade to the new system")
 
 
@@ -2577,7 +2577,7 @@ if __name__ == '__main__':
 						st.metric(label=":green[Annual Savings]", value='£'+str(bill_difference))				
 					
 				with col2:
-					st.metric(label="Upfront Cost", value='£'+str(int(summary_results_df.loc[fastest_payback_cond]['total_system_cost'].values[0]-current_scenario_investment)),			
+					st.metric(label="Upfront Cost", value='£'+str(int(summary_results_df.loc[fastest_payback_cond]['Upgrade Cost'].values[0])),			
 							  help="What it'll cost to upgrade to the new system")
 	
 
