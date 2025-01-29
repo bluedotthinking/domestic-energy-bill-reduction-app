@@ -53,7 +53,7 @@ def set_property_details():
 		if 'postcode' in st.session_state:
 			postcode = st.text_input("Postcode", st.session_state.postcode, help='To calculate the solar potential, outside air temperature, & match to available grants/installers')
 		else:
-			postcode = st.text_input("Postcode", '', help='To calculate the solar potential, outside air temperature, & match to available grants/installers')
+			postcode = st.text_input("Postcode", 'MK5 8HD', help='To calculate the solar potential, outside air temperature, & match to available grants/installers')
 
 
 		property_type = st.selectbox(
