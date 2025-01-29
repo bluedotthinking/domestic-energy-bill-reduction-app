@@ -17,10 +17,7 @@ from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from streamlit.components.v1 import html
 import webbrowser
 import fnmatch
-# import streamlit_toggle as tog
 import pvlib
-# from streamlit_modal import Modal
-# import streamlit.components.v1 as components
 import io
 import requests
 import plotly.graph_objects as go
@@ -174,10 +171,6 @@ def set_upgrades(vehicles_df, solar_pv_systems_df, heating_systems_df,
 		)
 		if future_heating_system != current_heating_system:
 			technology_options.append('Heating')
-
-		# st.session_state.current_heating_system = current_heating_system
-		# st.session_state.future_heating_system = future_heating_system
-		# heating_systems_df = heating_systems_df.loc[heating_systems_df['heating_system_name'].isin([current_heating_system]+[future_heating_system])]							
 			
 	with tab2:
 
@@ -348,12 +341,6 @@ def set_upgrades(vehicles_df, solar_pv_systems_df, heating_systems_df,
 
 		if  energy_tariff_option != current_energy_tariff:
 			technology_options.append('Tariff')
-
-		# energy_tariffs_df = energy_tariffs_df.loc[energy_tariffs_df['tariff_name'].isin([current_energy_tariff]+[energy_tariff_option])]
-		
-
-
-		
 				
 	with tab5:
 		annual_miles_driven = st.number_input('Annual Miles Driven', min_value=0, 
@@ -376,11 +363,8 @@ def set_upgrades(vehicles_df, solar_pv_systems_df, heating_systems_df,
 				 vehicles_df['vehicle_name'].unique(),
 				 on_change=set_results_require_rerun
 				 )
-# 			vehicle_change = st.checkbox('Consider Vehicle Change?', value=True, on_change=set_results_require_rerun)
 		st.markdown("""---""")			
 
-# 			if vehicle_change:
-# 			if 'Vehicle' in technology_options:
 		future_vehicle = st.selectbox(
 		label = 'Future Car',
 		options = vehicles_df['vehicle_name'].unique(),
@@ -428,24 +412,12 @@ def set_upgrades(vehicles_df, solar_pv_systems_df, heating_systems_df,
 def show_next_steps(installers_df, postcode_region):
 	
 
-	# st.write(postcode_region)
-	# installers_df
-
-	# suitable_installers_df_list = []
 	suitable_installer_ids = []
 	for n in range(len(installers_df.index)):
 		installer_regions = installers_df['region'].values[n]
-		# st.write(installer_regions)
-		# st.write(postcode_region)
 		if postcode_region in installer_regions:
 			suitable_installer_ids.append(installers_df['installer_id'].values[n])
-			# st.write(installers_df.iloc[n])
-			# suitable_installers_df_list = suitable_installers_df_list.append(installers_df.iloc[n])
-		# st.write(suitable_installer_ids)
 
-
-
-	# suitable_intallers_df = pd.concat(suitable_installers_df_list)
 	suitable_intallers_df = installers_df.loc[installers_df['installer_id'].isin(suitable_installer_ids)]
 	suitable_intallers_df.rename(columns={'name':'Company','products':'Products Offered'},inplace=True)
 	display_cols = ['Company','url','Products Offered']
@@ -571,9 +543,7 @@ def generate_half_hourly_electricity_baseload(profile_name, annual_electricity_c
 	half_hourly_df = pd.merge(half_hourly_df, baseload_profile_df,
 							  on=['hour','minute'], how='left')
 
-# 	print ('half_hourly_df Mem Usage:',half_hourly_df.memory_usage().sum()/1e6,'MB')
 	profile_grouped_df = half_hourly_df.groupby('profile_id')['electricity_demand_normalised'].sum().reset_index()
-# 	print (profile_grouped_df['electricity_demand_normalised'].sum())
 
 	half_hourly_df['electricity_demand_normalised'] = half_hourly_df['electricity_demand_normalised'] / profile_grouped_df['electricity_demand_normalised'].sum()
 	half_hourly_df['hh_period'] = ((half_hourly_df['hour']*2)+(half_hourly_df['minute']/30.)).astype(int)
@@ -613,8 +583,6 @@ def get_hourly_PVGIS_file(latitude, longitude, azimuth, tilt):
 	pvgis_output_df['day_of_year'] = pvgis_output_df['datetime'].dt.dayofyear
 	pvgis_output_df['hour'] = pvgis_output_df['datetime'].dt.hour
 	pvgis_output_df['minute'] = pvgis_output_df['datetime'].dt.minute    
-	print ('Solar PV Wh Generated per kWp', pvgis_output_df['watts_per_kWp'].sum()*0.5)
-
 
 	return pvgis_output_df
 
@@ -622,11 +590,6 @@ def get_hourly_PVGIS_file(latitude, longitude, azimuth, tilt):
 
 def calculate_heat_demand(df, user_gas_demand_kWh):
 	temperature_daily_df = df.groupby('day_of_year')['temperature_2m_degC'].mean().reset_index()
-
-	# solar_half_hourly_df = 
-
-	# solar_pv_half_hourly_df.drop(labels=['datetime','temperature_2m_degC'], axis=1, inplace=True)
-	
 
 	# Estimating Daily Gas Demand based on outdoor temperature and Annual Gas demand
 	# Using empirical estimator from S.D.Watson et al, https://www.sciencedirect.com/science/article/pii/S0301421518307249
@@ -890,10 +853,7 @@ def create_scenarios(vehicles_df, battery_storage_systems_df, battery_units_df,
 					 # solar_power_df,
 					 ev_chargers_df, energy_tariffs_df, ev_demand_dict_list, 
 					 technology_choices_dict):
-	
 
-	# st.write(heating_systems_df)
-	# st.write(technology_choices_dict)
 	heating_systems_df = heating_systems_df.loc[heating_systems_df['heating_system_name'].isin([technology_choices_dict['current_heating_system']]+[technology_choices_dict['future_heating_system']])]
 	battery_storage_systems_df = battery_storage_systems_df.loc[battery_storage_systems_df['battery_storage_name'].isin([technology_choices_dict['current_battery_storage_system']]+[technology_choices_dict['battery_storage_option']])]			
 	solar_power_df = pd.DataFrame(data={'solar_pv_power_kWp':[0,technology_choices_dict['future_solar_pv_power_Wp']]})
@@ -901,7 +861,6 @@ def create_scenarios(vehicles_df, battery_storage_systems_df, battery_units_df,
 	solar_pv_systems_df = solar_pv_systems_df.loc[solar_pv_systems_df['solar_pv_name'].isin([technology_choices_dict['current_solar_pv_system']]+[technology_choices_dict['solar_pv_option']])]			
 	energy_tariffs_df = energy_tariffs_df.loc[energy_tariffs_df['tariff_name'].isin([technology_choices_dict['current_energy_tariff']]+[technology_choices_dict['energy_tariff_option']])]
 	vehicles_df = vehicles_df.loc[vehicles_df['vehicle_name'].isin([technology_choices_dict['current_vehicle']]+[technology_choices_dict['future_vehicle']])]
-
 
 # 	Filter out No solar PV, but size >0
 	scenario_df = pd.merge(vehicles_df, battery_storage_systems_df, how='cross')
@@ -1438,10 +1397,6 @@ def generate_detailed_analysis(current_scenario_id, future_scenario_id):
 			st.write("- Export Income: £",summary_results_df.loc[current_cond]['electricity_export_revenue'].values[0]," → ",future_elec_export_income)						
 
 		st.write("")
-
-# 		st.write("***")
-
-# 		st.subheader('Natural Gas:')
 	
 		if change_gas_cost < 0:
 			st.write('Natural Gas - Saving £'+"{:.2f}".format(abs(change_gas_cost))+'/year')
@@ -1724,8 +1679,6 @@ def generate_detailed_analysis(current_scenario_id, future_scenario_id):
 	
 	st.subheader('Detailed Analysis')
 	
-	# with st.expander('See More...', expanded=False):
-
 	display_scenario_type = st.selectbox('Scenario to Display', options=['Future','Current'])
 
 	st.subheader('Demand & Generation Profile - Typical Day')
@@ -1829,24 +1782,11 @@ def generate_detailed_analysis(current_scenario_id, future_scenario_id):
 				st.write("Average cost per unit of electricity imported will drop to £",round(future_elec_effective_cost_per_kWh,2),"/kWh from £",round(current_elec_effective_cost_per_kWh,2),'/kWh')
 			else:
 				st.write("Average cost per unit of electricity imported will increase to £",round(future_elec_effective_cost_per_kWh,2),"/kWh from £",round(current_elec_effective_cost_per_kWh,2),'/kWh')			
-		
-
-# 			else:
-# 				st.write("Average cost per unit of electricity imported will increase to £",round(future_elec_effective_cost_per_kWh,2),"/kWh from £",round(current_elec_effective_cost_per_kWh,2),'/kWh')			
 
 		if display_scenario_type == 'Current':
 
 			st.write(int(current_total_demand_Wh/1000.),'kWh of electricity is imported from the grid every year, costing you £',int(current_grid_elec_import_cost))
-# 			st.write(int(100.*fraction_demand_off_peak),'% of grid import is during off-peak hours')
-# 			st.write('This is due to battery storage and EV preferentially charging at cheaper electricity import rates')
 			st.write("Average cost per unit of electricity is currently: £",round(current_elec_effective_cost_per_kWh,4),'/kWh')
-# 			if future_elec_effective_cost_per_kWh <= current_elec_effective_cost_per_kWh:
-# 				st.write("Average cost per unit of electricity imported will drop to £",round(future_elec_effective_cost_per_kWh,2),"/kWh from £",round(current_elec_effective_cost_per_kWh,2),'/kWh')
-# 			else:
-# 				st.write("Average cost per unit of electricity imported will increase to £",round(future_elec_effective_cost_per_kWh,2),"/kWh from £",round(current_elec_effective_cost_per_kWh,2),'/kWh')			
-
-
-
 
 	st.markdown("""---""")
 
@@ -1943,32 +1883,6 @@ def generate_detailed_analysis(current_scenario_id, future_scenario_id):
 - To satisfy household demand during non off-peak periods
 			""")
 
-		# st.markdown("""---""")		
-
-		# st.subheader('Energy Tariff')
-	
-		# col1, col2 = st.columns(2)
-	
-		# with col1:
-		# 	st.write('Current - ',current_energy_tariff,'-',energy_tariffs_df.loc[energy_tariffs_df['tariff_name']==current_energy_tariff]['supplier_name'].values[0])
-
-		# 	current_tariff_rates_dict = energy_tariffs_df.loc[energy_tariffs_df['tariff_name']==current_energy_tariff]['tariff_rates'].values[0]
-		# 	for x in current_tariff_rates_dict:
-		# 		st.write(x)
-	
-		# with col2:
-		# 	st.write('Future - ',energy_tariff_option,'-',energy_tariffs_df.loc[energy_tariffs_df['tariff_name']==energy_tariff_option]['supplier_name'].values[0])
-
-
-		# 	future_tariff_rates_dict = energy_tariffs_df.loc[energy_tariffs_df['tariff_name']==energy_tariff_option]['tariff_rates'].values[0]
-		
-		# 	for x in future_tariff_rates_dict:
-		# 		st.write(x)			
-
-	
-
-
-
 def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
@@ -1982,31 +1896,6 @@ def generate_waterfall_chart(summary_results_df,
 								future_scenario_idx
 							 ):
 
-	# To draw this, we need:
-	# Current bill, future bill totals
-	# Gas cost
-	# Petrol/Diesel cost
-	# 0. Current energy cost (elec + gas + petrol/diesel)
-	# 0. Change in Gas Cost (if none then don't have col)
-	# 0. Change in Petrol cost (if none then don't have col)
-	# 1. Change in electricity baseload cost
-	# 2. What did we then avoid importing because of Solar?
-	# 3. Of what's left, any difference between the demand and the original 
-	#    baseload is down to:
-		# Battery
-		# EV
-		# Heatpump
-
-	# New Income:
-		# Avoided grid import due to Solar (Self consumption)
-		# Electricity Export income
-
-	# New Costs:
-		# Heat pump cost
-		# EV charging cost
-		# Battery charging costs
-		# Baseload, but now charged at a higher rate during the day
-
 	# We need to time-stepped analysis - 
 
 		current_cond = (summary_results_df['scenario_id'] == current_scenario_idx)
@@ -2017,29 +1906,6 @@ def generate_waterfall_chart(summary_results_df,
 		current_gas_cost = summary_results_df.loc[current_cond]['gas_import_cost'].values[0] + summary_results_df.loc[current_cond]['gas_standing_charge_annual'].values[0]
 		current_ice_fuel_cost = summary_results_df.loc[current_cond]['vehicle_fuel_cost'].values[0]
 		current_total_energy_cost = (current_elec_cost+current_gas_cost+current_ice_fuel_cost)
-
-		# current_elec_effective_cost_per_kWh = summary_results_df.loc[current_cond]['electricity_import_cost'].values[0]/(summary_results_df.loc[current_cond]['grid_elec_import_Wh'].values[0]*0.001)
-
-
-		# current_baseload_demand_Wh = annual_electricity_consumption_kWh*1000.
-		# current_ev_demand_Wh = summary_results_df.loc[current_cond]['ev_charging_demand_Wh'].values[0]
-		# current_heatpump_demand_Wh = summary_results_df.loc[current_cond]['electricity_demand_heatpump_Wh'].values[0]
-		# current_solar_pv_generation_Wh = summary_results_df.loc[current_cond]['solar_pv_generation_Wh'].values[0]
-		# current_grid_elec_export_Wh = summary_results_df.loc[current_cond]['grid_elec_export_Wh'].values[0]
-		# current_solar_pv_self_consumed_Wh = current_solar_pv_generation_Wh - current_grid_elec_export_Wh
-		# current_total_demand_Wh = current_baseload_demand_Wh + current_ev_demand_Wh + current_heatpump_demand_Wh
-
-		# current_grid_elec_import_cost = summary_results_df.loc[current_cond]['electricity_import_cost'].values[0]
-		# current_baseload_elec_cost = current_grid_elec_import_cost * (current_baseload_demand_Wh/(current_baseload_demand_Wh+current_ev_demand_Wh+current_heatpump_demand_Wh))
-		# current_ev_elec_cost = current_grid_elec_import_cost * (current_ev_demand_Wh/(current_baseload_demand_Wh+current_ev_demand_Wh+current_heatpump_demand_Wh))
-		# current_heatpump_elec_cost = current_grid_elec_import_cost * (current_heatpump_demand_Wh/(current_baseload_demand_Wh+current_ev_demand_Wh+current_heatpump_demand_Wh))
-		# current_solar_pv_export_income = summary_results_df.loc[current_cond]['electricity_export_revenue'].values[0]
-		# current_gas_standing_charge = summary_results_df.loc[current_cond]['gas_standing_charge_annual'].values[0]
-	 	# current_gas_usage_cost = summary_results_df.loc[current_cond]['gas_import_cost'].values[0]
-	
-
-
-
 
 		future_elec_standing_charge = summary_results_df.loc[future_cond]['electricity_standing_charge_annual'].values[0]
 
@@ -2057,30 +1923,6 @@ def generate_waterfall_chart(summary_results_df,
 		diff_elec_cost = future_elec_cost - current_elec_cost
 		diff_gas_cost = future_gas_cost - current_gas_cost
 		diff_ice_fuel_cost = future_ice_fuel_cost - current_ice_fuel_cost
-
-		# future_elec_effective_cost_per_kWh = summary_results_df.loc[selected_future_scenario_cond]['electricity_import_cost'].values[0]/(summary_results_df.loc[selected_future_scenario_cond]['grid_elec_import_Wh'].values[0]*0.001)
-		
-		# future_baseload_demand_Wh = current_baseload_demand_Wh
-		# future_ev_demand_Wh = summary_results_df.loc[selected_future_scenario_cond]['ev_charging_demand_Wh'].values[0]
-		# future_heatpump_demand_Wh = summary_results_df.loc[selected_future_scenario_cond]['electricity_demand_heatpump_Wh'].values[0]
-		# future_solar_pv_generation_Wh = summary_results_df.loc[selected_future_scenario_cond]['solar_pv_generation_Wh'].values[0]
-		# future_grid_elec_export_Wh = summary_results_df.loc[selected_future_scenario_cond]['grid_elec_export_Wh'].values[0]
-		# future_solar_pv_self_consumed_Wh = future_solar_pv_generation_Wh - future_grid_elec_export_Wh
-		# future_total_demand_Wh = future_baseload_demand_Wh + future_ev_demand_Wh + future_heatpump_demand_Wh
-		# future_grid_import_Wh = summary_results_df.loc[selected_future_scenario_cond]['grid_elec_import_Wh'].values[0]
-		
-		# future_grid_elec_import_cost = summary_results_df.loc[selected_future_scenario_cond]['electricity_import_cost'].values[0]
-		# future_baseload_elec_cost = future_grid_elec_import_cost * (future_baseload_demand_Wh/(future_baseload_demand_Wh+future_ev_demand_Wh+future_heatpump_demand_Wh))
-
-		# future_ev_elec_cost = future_grid_elec_import_cost * (future_ev_demand_Wh/(future_baseload_demand_Wh+future_ev_demand_Wh+future_heatpump_demand_Wh))
-		# future_heatpump_elec_cost = future_grid_elec_import_cost * (future_heatpump_demand_Wh/(future_baseload_demand_Wh+future_ev_demand_Wh+future_heatpump_demand_Wh))
-		# future_elec_export_income = summary_results_df.loc[selected_future_scenario_cond]['electricity_export_revenue'].values[0]
-
-		# future_gas_standing_charge = summary_results_df.loc[selected_future_scenario_cond]['gas_standing_charge_annual'].values[0]
-		# future_gas_usage_cost = summary_results_df.loc[selected_future_scenario_cond]['gas_import_cost'].values[0]
-
-		# future_solar_pv_self_consumed_fraction = future_solar_pv_self_consumed_Wh / future_solar_pv_generation_Wh
-		# future_solar_pv_exported_fraction = 1.-future_solar_pv_self_consumed_fraction
 
 		current_elec_export_income = summary_results_df.loc[current_cond]['electricity_export_revenue'].values[0]
 
@@ -2114,12 +1956,6 @@ if __name__ == '__main__':
 	cols = ['heating_system_name','solar_pv_name','battery_storage_name','vehicle_name','ev_charger_name','tariff_name']
 	litres_per_gallon = 4.546
 	
-
-
-
-	# technology_options = []
-	# st.sidebar.subheader('CutMyEnergyBill - Domestic Energy Bill Reduction App (DEBRA)')
-
 	# Location
 
 	if 'property_details_set' not in st.session_state:
@@ -2184,34 +2020,6 @@ if __name__ == '__main__':
 	st.title('Cut My Energy Bill')
 	st.write('_See what your low carbon technology setup could save you in bills, without speaking to a single salesperson_')
 	col1, col2 = st.columns([4,1],gap='small')
-	# with col1:
-		
-
-		# st.write("You've selected",st.session_state.n_technology_options,"upgrades")
-		# st.write("Based on your options (see left), you're open to upgrading",', '.join(technology_options))
-
-
-# 	with st.sidebar.expander("How It Works", expanded=False):
-
-# 		st.write(
-# 			"""     
-# The tool calculates the half-hourly usage of a household for an entire year, based on your location - including:
-# - Household appliances demand (excluding EVs, Heat Pumps)
-# - Heating demand (from Gas Boilers or Air-source Heat Pumps)
-# - Solar PV generation (using EU-PVGIS)
-# - Battery charging and discharge
-# - EV charging demand
-# Costs and export income are calculated against multiple energy tariffs
-# For all assumptions & details, see our [GitHub Project](https://github.com/cutmyenergybill/domestic-energy-bill-reduction-app/)
-# """
-# 	)
-
-# 	st.sidebar.write('Join the [Facebook Discussion Group](https://www.facebook.com/groups/2197329430289466/)')
-
-# 	st.sidebar.write('Supported by [Climate Subak](https://climatesubak.org/)')
-
-# 	st.sidebar.write('Contribute to the [GitHub Project](https://github.com/cutmyenergybill/domestic-energy-bill-reduction-app/)')
-
 
 	# Generate the half-hourly df
 	profile_name = 'ProfileClass1'
@@ -2253,15 +2061,6 @@ if __name__ == '__main__':
 
 			st.session_state.summary_results_df = process_scenarios(df, scenario_df, scenarios_dict)
 			st.session_state.results_present = True
-
-	# with col2:
-	# 	if st.button('Show Results', type='primary'):
-	# 		with st.spinner(text='Running '+str(len(scenario_df))+' scenarios - this may take a few minutes...'):
-
-	# 			st.session_state.summary_results_df = process_scenarios(df, scenario_df, scenarios_dict)
-	# 			st.session_state.results_present = True
-
-
 
 	if not st.session_state.results_present:
 		st.caption('Inputs Updated - Refresh Results with Button Above')		
@@ -2381,16 +2180,6 @@ if __name__ == '__main__':
 		current_gas_standing_charge = summary_results_df.loc[current_cond]['gas_standing_charge_annual'].values[0]
 		current_gas_usage_cost = summary_results_df.loc[current_cond]['gas_import_cost'].values[0]
 
-		# current_ice_fuel_cost
-		# current_elec_standing_charge
-		# current_grid_elec_import_cost
-		# current_baseload_elec_cost
-		# current_ev_elec_cost
-		# current_heatpump_elec_cost
-		# current_solar_pv_export_income
-		# current_gas_standing_charge
-		# current_gas_usage_cost
-
 		summary_results_df['Annual Savings'] = (current_total_energy_cost-
 														summary_results_df['Annual Cost']).round(0)
 
@@ -2444,7 +2233,6 @@ if __name__ == '__main__':
 				)
 		
 		largest_annual_savings_idx = summary_results_df.loc[future_potential_cond].sort_values(by='Annual Cost',ascending=True)['scenario_id'].values[0]
-		print (largest_annual_savings_idx)
 		best_return_10_years_idx = summary_results_df.sort_values(by='10 Year Return',ascending=False)['scenario_id'].values[0]	
 		best_return_25_years_idx = summary_results_df.sort_values(by='25 Year Return',ascending=False)['scenario_id'].values[0]	
 		fastest_payback_idx = summary_results_df.loc[summary_results_df['payback']>0.].sort_values(by='payback',ascending=True)['scenario_id'].values[0]	
@@ -2461,21 +2249,9 @@ if __name__ == '__main__':
 		selected_scenario_id = largest_annual_savings_idx
 		selected_scenario_cond = largest_annual_savings_cond
 
-
 		old_annual_bill = int(summary_results_df.loc[current_cond]['Annual Cost'].values[0])
 		new_annual_bill = int(summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Annual Cost'].values[0])
 		bill_difference = old_annual_bill - new_annual_bill
-
-		# Fastest payback
-		# No upfront spend
-		# Keeping your current vehicle...
-		# Keeping costs below X
-		# Best net return over 25 years
-
-		# if bill_difference > 0:
-		# 	msg = 'With '+str(st.session_state.n_technology_options)+ ' upgrades, you can expect a lower energy bill'
-		# if bill_difference <= 0:
-		# 	msg = 'With '+str(st.session_state.n_technology_options)+ ' upgrades, you can expect a higher energy bill'
 
 		with st.container(border=True):
 			msg = """**Your Chosen Option:**
@@ -2483,31 +2259,20 @@ if __name__ == '__main__':
 			st.write(msg)	
 			col1, col2, col3, col4 = st.columns([1,1,1,1],gap='small')		
 			with col1:
-				# st.metric(label=":red[Old Annual Bill]", value='£'+str(int(summary_results_df.loc[current_cond]['Annual Cost'].values[0])))
 				# Show annual savings
-				
 				if bill_difference <= 0.:
 					st.metric(label=":red[Annual Loss]", value='£'+str(bill_difference))
 				
 				else:
 					st.metric(label=":green[Annual Savings]", value='£'+str(bill_difference))				
-				# Show Payback period				
 
 			with col2:
-				# st.metric(label=":green[New Annual Bill]", value='£'+str(int(summary_results_df.loc[future_potential_cond].loc[selected_scenario_cond]['Annual Cost'].values[0])),			
-				# 		  help="If your bill is negative, you'll earn income over the course of a year")
-				# Show investment needed
+				# Show upfront cost needed
 				st.metric(label="Upfront Cost", value='£'+str(int(summary_results_df.loc[selected_scenario_cond]['Upgrade Cost'].values[0])),			
 						  help="What it'll cost to upgrade to the new system")
 				
 
-			with col3:
-				
-				# if bill_difference <= 0.:
-				# 	st.metric(label=":red[Annual Loss]", value='£'+str(bill_difference))
-				
-				# else:
-				# 	st.metric(label=":green[Annual Savings]", value='£'+str(bill_difference))				
+			with col3:				
 				# Show Payback period
 				st.metric(label="Payback", value=str(int(summary_results_df.loc[selected_scenario_cond]['Payback (Years)'].values[0]))+' years')
 				
@@ -2520,11 +2285,8 @@ if __name__ == '__main__':
 					# show_details()
 					generate_detailed_analysis(current_scenario_idx, selected_scenario_id)
 
-		# st.write('#')
 		st.write("***")
 		st.write("Other Options Are Available:")
-		# selected_scenario_id
-		# best_return_25_years_idx
 		if best_return_25_years_idx != selected_scenario_id:
 			with st.container(border=True):
 				msg = """*Best Return Over 25 Years:*
@@ -2589,44 +2351,11 @@ if __name__ == '__main__':
 					if st.button("Find an Installer",key='fastest_payback',type="primary"):
 						show_next_steps(installers_df, postcode_region)						
 					if st.button("See More Details", type="secondary",key='fastest_payback_details'):
-						# show_details()
 						generate_detailed_analysis(current_scenario_idx, fastest_payback_idx)
-		
-		# current_cond = (
-		# 		(summary_results_df['heating_system_name']==current_heating_system) &
-		# 		(summary_results_df['vehicle_name'] == current_vehicle)&
-		# 		(summary_results_df['battery_storage_name']==current_battery_storage_system)&
-		# 		(summary_results_df['solar_pv_name']==current_solar_pv_system)&
-		# 		(summary_results_df['tariff_name']==current_energy_tariff)
-		# 		)
 
-		# current_scenario_idx = summary_results_df.loc[current_cond]['scenario_id'].values[0]
-
-		# future_potential_cond = (
-		# 		(summary_results_df['heating_system_name'] == future_heating_system) &
-		# 		(summary_results_df['vehicle_name'] == future_vehicle)&
-		# 		(summary_results_df['battery_storage_name'] == battery_storage_option)&
-		# 		(summary_results_df['solar_pv_name'] == solar_pv_option)&
-		# 		(summary_results_df['tariff_name'] == energy_tariff_option)
-		# 		)
-		
-		# future_scenario_idx = summary_results_df.loc[future_potential_cond].sort_values(by='Annual Cost',ascending=True)['scenario_id'].values[0]
-		# generate_waterfall_chart(summary_results_df, 
-		# 						current_scenario_idx, 
-		# 						selected_scenario_id
-		# 					 )
-
-		# Show how long it'll take to payback....a v short but wide chart
-
-		# 
-		# st.write('***')		
-		# generate_detailed_analysis(current_scenario_idx, selected_scenario_id)
-
-		# Have you considered?
-		# Faster payback
-		# Higher Net Benefit over 25 years
 
 # 		Create an Excel file and let users download the full analysis for themselves!
+		st.write("***")
 
 		current_half_hourly_results_df = evaluate_scenario(df, scenarios_dict[current_scenario_idx], current_scenario_idx)
 		future_half_hourly_results_df = evaluate_scenario(df, scenarios_dict[selected_scenario_id], selected_scenario_id)
@@ -2644,7 +2373,7 @@ if __name__ == '__main__':
 		    writer.close()
 
 		    st.download_button(
-		        label="Download Excel worksheets",
+		        label="Download Excel Spreadsheet",
 		        data=buffer,
 		        file_name="cutmyenergybill-export.xlsx",
 		        mime="application/vnd.ms-excel"
